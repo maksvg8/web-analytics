@@ -31,4 +31,5 @@ google_apis/cred/
 custom_reports/cred/
 google_apis/data/
 credentials.py
-ga4_pd_quota_table.xlsx
+*.xlsx
+*.csv

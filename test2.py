@@ -35,7 +35,7 @@ df2["date"] = pd.to_datetime(df2["date"], format='%Y-%m-%d')
 
 # mask1 = df1['date'] == df2['date']
 # mask1 = df1['categ'].str.contains(df1['url'])
-df1 = transform_banner_data(df1)
+df1 = transform_banners_sheet(df1)
 
 def sum_banners(df1, df2=None):
     df1['test'] = ''

@@ -7,29 +7,36 @@ from config import (BANNER_SHEET_ID ,BANNER_SHEET_ED_RANGE, BANNER_SHEET_EM_RANG
 
 
 def banner_report(project):
-    sheet_range, re_banner_parameter = set_project(project)
+    sheet_range, re_banner_parameter = set_project_for_banners(project)
     banners = get_rows_from_gooogle_sheets(BANNER_SHEET_ID, sheet_range)
-    banners = transform_banner_data(banners)
+    banners = transform_banners_sheet(banners)
 
     banners = extraction_banner_parameter(banners, re_banner_parameter)
     banners['Итоговая ссылка с меткой'] = banners['Итоговая ссылка с меткой'].str.replace(rf'{re_banner_parameter}', r'\1', regex=True)
-    banners, start_date, end_date = get_date_range_from_banners_sheet(banners)
-    print(banners)
-    print(banners.info())
+    start_date, end_date = get_date_range_from_banners_sheet(banners)
+
 
     
-    banner_data = ym.YandexMetricReport('banner', project, 'banner_report')
-    banner_data.at_start_date = start_date
-    banner_data.at_end_date = end_date
-    banner_data_df = banner_data.all_ym_rows_to_df()
-    print(banner_data_df)
-    
-    # category_data = ym.YandexMetricReport('category', project, 'category_report')
-    # category_data.at_start_date = start_date
-    # category_data.at_end_date = end_date
-    # category_data_df = category_data.all_ym_rows_to_df()
-    # print(category_data_df)
-    
+    banner_click_data = ym.YandexMetricReport('banner', project, 'banner_report')
+    banner_click_data.at_start_date = start_date
+    banner_click_data.at_end_date = end_date
+    banner_click_df = banner_click_data.all_ym_rows_to_df()
+
+
+    banners['Date'] = banners['Date'].astype(str)
+    banner_data_click = pd.merge(banners,
+                       banner_click_df,
+                       left_on=['Date', 'Итоговая ссылка с меткой'],
+                       right_on=['ym:pv:date', 'ym:pv:URLParamNameAndValue'],
+                       how='left')
+
+    category_data = ym.YandexMetricReport('category', project, 'category_report')
+    category_data.at_start_date = start_date
+    category_data.at_end_date = end_date
+    category_data_df = category_data.all_ym_rows_to_df()
+
+    new_df = get_views_from_categories(banner_data_click, category_data_df)
+    new_df.to_excel("df_3333333.xlsx", index=False)
 
     
     # if cost_data.empty == False:
