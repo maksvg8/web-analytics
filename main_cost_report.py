@@ -11,24 +11,24 @@ def cost_report():
     if cost_data.empty == True:
         start_date = datetime.date.today() - timedelta(days=60)
     else:
-        last_cost_data = extract_cost_data_for_last_date(cost_data)
+        backup_data = cost_data.copy(deep=True)
+        last_cost_data = extract_cost_data_for_last_date(backup_data)
         overwriting_csv(last_cost_data, 'old_cost_data')
-        cost_data['Day'] = pd.to_datetime(cost_data['Day'])
-        start_date = cost_data['Day'].min()
+        cost_data = cost_data[(cost_data['Project'] != 'GS')&(cost_data['Project'] != 'EU')]
+        date_definitions = cost_data.copy(deep=True)
+        date_definitions['Day'] = pd.to_datetime(date_definitions['Day'])
+        start_date = date_definitions['Day'].min()
     start_date = start_date.strftime('%Y-%m-%d')
-        
+    
 
     report_ed = ym.YandexMetricReport('ym_test', 'ed', 'campaign_report')
     report_ed.at_start_date = start_date
-    # reportED.atEndDate = '2023-06-18'
     data_ed = report_ed.all_ym_rows_to_df()
 
     report_em = ym.YandexMetricReport('ym_test', 'em', 'campaign_report')
     report_em.at_start_date = start_date
-    # reportEM.atEndDate = '2023-06-18'
     data_em = report_em.all_ym_rows_to_df()
 
-    cost_data = get_rows_from_gooogle_sheets(COAST_SHEET_ID, COAST_SHEET_RANGE)
     merged_df = merge_ym_df_and_costs_data(data_ed, data_em, cost_data)
 
     # Получение данных бюджета
