@@ -11,7 +11,7 @@ from search_term import aggregate_search_terms
 report = ga4.GA4Report("ga4_search_term_23_07", "ed")
 # report = ga4.GA4Report("ga4_mail_june", "em")
 report.at_start_date = "2023-07-01"
-report.at_end_date = "2023-07-23"
+report.at_end_date = "2023-07-01"
 report.at_ga4_dim_list = ga4_dim_search_term
 report.at_ga4_metr_list = ga4_metr_search_term
 # report.at_ga4_dim_list = ga4_dim_transaction_email
@@ -30,9 +30,8 @@ report.at_limit = 100000
 df = report.ga4_all_rows_to_df()
 
 df = df.reset_index(drop=True)
-aggregate_search_terms(df, report.at_report_name)
+# aggregate_search_terms(df, report.at_report_name)
+print(df)
 
-# a, b, c = report.ga4_run_report_request()
-# print(a)
 
 # нужно переписать логику поиска файла по имени (нужно использовать имя проекта и имя )

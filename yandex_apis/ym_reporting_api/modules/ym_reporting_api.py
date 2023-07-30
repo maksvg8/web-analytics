@@ -4,6 +4,8 @@ from typing import List
 import datetime
 import functools
 
+from custom_reports.modules.class_report import CustomReport
+
 from yandex_apis.cred.credentials import (DATA_DIRECTORY, YM_TOKEN,
                                           YM_CLIENT_ID, YM_ED_COUNTER_ID,
                                           YM_EM_COUNTER_ID)
@@ -11,23 +13,17 @@ from yandex_apis.cred.credentials import (DATA_DIRECTORY, YM_TOKEN,
 from yandex_apis.ym_reporting_api.config.default_configuration import *
 
 
-class YandexMetricReport:
+class YandexMetricReport(CustomReport):
     """
     """
     def __init__(self,
                  report_name: str,
                  project_name: str = "ed",
                  report_type: str = "default"):
-        self.at_report_name: str = report_name
-        self.at_project_name: str = project_name
-        self.at_report_type: str = report_type
+        CustomReport.__init__(self,report_name, project_name, report_type)
         self.at_file_name: str = None
         self.ym_token: str = YM_TOKEN
         self.ym_client_id: str = YM_CLIENT_ID
-        dt_today = datetime.date.today()
-        dt_yesterday = str(dt_today - datetime.timedelta(days=1))
-        self.at_start_date: str = dt_yesterday
-        self.at_end_date: str = dt_yesterday
         #
         self.at_ym_dim: str = ''
         self.at_ym_metr: str = ''
@@ -37,7 +33,7 @@ class YandexMetricReport:
         self.at_filters: str = ''
         self.at_ym_response = None
         self.at_ym_data = None
-        self.at_ym_df = pd.DataFrame()
+        self.at_report_df = pd.DataFrame()
         self.at_total_rows: int = None
         self.__set_report_source()
         self.__check_report_type()
@@ -63,9 +59,6 @@ class YandexMetricReport:
             self.__set_banner_report_params()
         elif self.at_report_type == "category_report":
             self.__set_category_report_params()
-
-    def create_file_name(self):
-        self.at_file_name: str = f"{self.at_project_name}_{self.at_report_type}_{self.at_report_name}"
 
     def __set_campaign_report_params(self):
         self.at_ym_dim = DIM_CAMPAIGN_REPORT
@@ -175,7 +168,7 @@ class YandexMetricReport:
             row_data = dimensions_values + metrics_values
             rows_data.append(row_data)
         df = pd.DataFrame(rows_data, columns=dimensions + metrics)
-        self.at_ym_df = df
+        self.at_report_df = df
         return df
 
     def all_ym_rows_to_df(self):
@@ -189,30 +182,11 @@ class YandexMetricReport:
                 else:
                     self.at_limit = self.at_total_rows - (self.at_limit +
                                                           self.at_offset) - 1
-                report_df = self.at_ym_df
+                report_df = self.at_report_df
                 self.ym_response()
                 self.ym_response_to_df()
-                self.at_ym_df = pd.concat([report_df, self.at_ym_df])
+                self.at_report_df = pd.concat([report_df, self.at_report_df])
         except:
             raise "проблема с подключением"
         finally:
-            return self.at_ym_df
-
-    def overwriting_old_csv_report(self, df=pd.DataFrame(), file_name=None):
-        # if the method was called without arguments, then the values from the attributes are used
-        if df.empty == True:
-            df = self.at_ym_df
-        if file_name is None:
-            self.create_file_name()
-            file_name = self.at_file_name
-        file_path = f"{DATA_DIRECTORY}{file_name}.csv"
-        try:
-            old_ym_df = pd.read_csv(file_path)
-        except IOError as e:
-            df.to_csv(file_path, index=False)
-        else:
-            df = pd.concat([old_ym_df, df])
-            df.to_csv(file_path, index=False)
-            # setting class attributes
-        print("Report exported to csv")
-        return df
+            return self.at_report_df

@@ -11,35 +11,26 @@ from google.analytics.data_v1beta.types import (DateRange, Dimension, Filter,
                                                 MetricType,
                                                 FilterExpressionList)
 
+from custom_reports.modules.class_report import CustomReport
+
 from google_apis.cred.credentials import (DATA_DIRECTORY, GA4_ED_PROPERTY_ID, GA4_EM_PROPERTY_ID,
                          GOOGLE_CREDENTIALS_JSON_PATH)
-from google_apis.data_api.config.default_configuration import (ga4_dim_default, ga4_metr_default, field_name,
-                    filters_value_transaction, filters_value_funnel,
-                    filters_value)
-
-
-
+from google_apis.data_api.config.default_configuration import *
 
 
 class GA4Exception(Exception):
     """base class for GA4 exceptions"""
 
 
-class GA4Report:
+class GA4Report(CustomReport):
     """
     """
     def __init__(self,
-                 report_name: str = "ga4_report",
+                 report_name: str,
                  project_name: str = "ed",
                  report_type: str = "default"):
-        self.at_report_name: str = report_name
-        self.at_project_name: str = project_name
-        self.at_report_type: str = report_type
+        CustomReport.__init__(self,report_name, project_name, report_type)
         self.at_file_name: str = None
-        dt_today = datetime.date.today()
-        dt_yesterday = dt_today - datetime.timedelta(days=1)
-        self.at_start_date = dt_yesterday
-        self.at_end_date = dt_yesterday
         #
         self.at_ga4_dim_list: List[str] = None
         self.at_ga4_metr_list: List[str] = None
@@ -51,7 +42,6 @@ class GA4Report:
         self.at_taken_rows_count: int = None
         self.at_tokens_per_day_total: int = None
         self.at_tokens_per_hour_total: int = None
-        self.at_report_df = pd.DataFrame()
         self.at_quota_df = pd.DataFrame()
         self.__set_report_source()
 
@@ -63,20 +53,6 @@ class GA4Report:
             self.at_property_id: str = GA4_EM_PROPERTY_ID
         else:
             raise "Invalid project name"
-
-    def __check_default_report(self):
-        if self.at_report_type == "default":
-            if self.at_ga4_dim_list == ga4_dim_default and self.at_ga4_metr_list == ga4_metr_default:
-                self.at_report_type = "default"
-            elif self.at_ga4_dim_list is None and self.at_ga4_metr_list is None:
-                self.at_ga4_dim_list = ga4_dim_default
-                self.at_ga4_metr_list = ga4_metr_default
-            elif self.at_ga4_dim_list != ga4_dim_default or self.at_ga4_metr_list != ga4_metr_default:
-                self.at_report_type = "custom"
-
-    def create_file_name(self):
-        self.__check_default_report()
-        self.at_file_name: str = f"{self.at_project_name}_{self.at_report_type}_{self.at_report_name}"
 
     def collect_quota(method):
         @functools.wraps(method)
@@ -216,32 +192,6 @@ class GA4Report:
         print("ga4_response_to_df - successful")
         return ga4_new_pd_report_df, all_respons_rows
 
-    def ga4_overwriting_old_csv_report(self,
-                                       ga4_new_pd_report_df=pd.DataFrame()):
-        # if the method was called without arguments, then the values from the attributes are used
-        file_name = self.at_file_name
-        file_path = f"{DATA_DIRECTORY}{file_name}.csv"
-
-        if ga4_new_pd_report_df.empty == True:
-            ga4_new_pd_report_df = self.at_report_df
-
-        if file_name in "meta":
-            try:
-                ga4_new_pd_report_df.to_csv(file_path, index=False)
-            except:
-                raise "Ошибка при записи отчета с метаданными"
-        else:
-            try:
-                ga4_old_pd_report_table = pd.read_csv(file_path)
-            except IOError as e:
-                ga4_new_pd_report_df.to_csv(file_path, index=False)
-            else:
-                ga4_new_pd_report_df = pd.concat(
-                    [ga4_old_pd_report_table, ga4_new_pd_report_df])
-                ga4_new_pd_report_df.to_csv(file_path, index=False)
-                # setting class attributes
-        print("Report exported to csv")
-
     def ga4_report_quota_to_df(self,
                                ga4_response=None,
                                taken_rows_count=None,
@@ -334,75 +284,4 @@ class GA4Report:
         except:
             raise "проблема с квотами"
         finally:
-            self.ga4_overwriting_old_csv_report()
             return self.at_report_df
-
-    def ga4_cycle_all_available_rows_to_csv(self,
-                                            limit_int: int = None,
-                                            offset_int: int = None,
-                                            start_date_str: str = None,
-                                            end_date_str: str = None,
-                                            dimension_list: List[str] = None,
-                                            metric_list: List[str] = None):
-        # if the method was called without arguments, then the values from the attributes are used
-        if limit_int == None:
-            limit_int = self.at_limit
-        else:
-            self.at_limit = limit_int
-
-        if offset_int == None:
-            offset_int = self.at_offset
-        else:
-            self.at_offset = offset_int
-
-        if start_date_str == None:
-            start_date_str = f"{self.at_start_date}"
-        else:
-            self.at_start_date = start_date_str
-
-        if end_date_str == None:
-            end_date_str = f"{self.at_end_date}"
-        else:
-            self.at_end_date = end_date_str
-
-        if dimension_list == None:
-            dimension_list = self.at_ga4_dim_list
-        else:
-            self.at_ga4_dim_list = dimension_list
-
-        if metric_list == None:
-            metric_list = self.at_ga4_metr_list
-        else:
-            self.at_ga4_metr_list = metric_list
-
-
-# переписать как отдельный метод
-# добавить логику работы с квотами
-        response, taken_rows_count, offset_int = self.ga4_run_report_request(
-            limit_int, offset_int, start_date_str, end_date_str,
-            dimension_list, metric_list)
-        ga4_new_pd_report_df, all_respons_rows = self.ga4_response_to_df(
-            response)
-        ga4_new_pd_quota_table = self.ga4_report_quota_to_df(
-            response, taken_rows_count, offset_int)
-        self.ga4_overwriting_old_quota_excel(ga4_new_pd_quota_table)
-        self.ga4_overwriting_old_csv_report(ga4_new_pd_report_df)
-        print(self.at_all_respons_rows, self.at_tokens_per_day_total,
-              self.at_tokens_per_hour_total, self.at_taken_rows_count)
-        while taken_rows_count + offset_int < all_respons_rows:
-            if all_respons_rows - (taken_rows_count + offset_int) > 100000:
-                limit_int = 100000
-            else:
-                limit_int = all_respons_rows - (taken_rows_count + offset_int)
-            offset_int += taken_rows_count
-            response, taken_rows_count, offset_int = self.ga4_run_report_request(
-                limit_int, offset_int, start_date_str, end_date_str,
-                dimension_list, metric_list)
-            ga4_new_pd_report_df, all_respons_rows = self.ga4_response_to_df(
-                response)
-            ga4_new_pd_quota_table = self.ga4_report_quota_to_df(
-                response, taken_rows_count, offset_int)
-            self.ga4_overwriting_old_quota_excel(ga4_new_pd_quota_table)
-            self.ga4_overwriting_old_csv_report(ga4_new_pd_report_df)
-            print(self.at_all_respons_rows, self.at_tokens_per_day_total,
-                  self.at_tokens_per_hour_total, self.at_taken_rows_count)

@@ -14,13 +14,11 @@ def banner_report(project, PLACEMENT_ERROR = 0):
     banners = extract_banners_parameters(banners, re_banner_parameter)
     banners['Итоговая ссылка с меткой'] = banners['Итоговая ссылка с меткой'].str.replace(rf'{re_banner_parameter}', r'\1', regex=True)
     start_date, end_date = get_date_range_from_banners_sheet(banners, PLACEMENT_ERROR)
-    banners['Date'] = banners['Date'].astype(str)
 
     banner_click_data = ym.YandexMetricReport('banner', project, 'banner_report')
     banner_click_data.at_start_date = start_date
     banner_click_data.at_end_date = end_date
     banner_click_df = banner_click_data.all_ym_rows_to_df()
-
     
     banner_data_click = pd.merge(banners,
                        banner_click_df,
