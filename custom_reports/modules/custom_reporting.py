@@ -150,20 +150,21 @@ def set_project_for_banners(project):
     return sheet_range, re_banner_parameter
 
 
-def extraction_banner_parameter(df, re_banner_parameter):
+def extract_banners_parameters(df, re_banner_parameter):
     df['Итоговая ссылка с меткой'] = df['Итоговая ссылка с меткой'].str.replace(rf'{re_banner_parameter}', r'\1', regex=True)
     return df
 
 
-def transform_banners_sheet(df, PLACEMENT_START_ERROR = 0, PLACEMENT_END_ERROR = 0):
+def transform_banners_sheet(df, project, PLACEMENT_ERROR = 0):
     '''
     Преобразует таблицу с отчетность по размещению баннеров в удобную для объединения с данными метрики.
     Использует коэфициент ошибки, если установить 1, будет отнимать 1 день от нрачала размещения и добавлять 1 день к концу размещения, по умолчаю 0.
     
     '''
+    df['Проект'] = project
     df = df.drop(df[df['Итоговая ссылка с меткой'] == "Ошибка: Есть незаполненное поле"].index)
-    df['Дата начала размещения'] = pd.to_datetime(df['Дата начала размещения'], format="%d.%m.%Y") - timedelta(days=PLACEMENT_START_ERROR)
-    df['Дата окончания размещения'] = pd.to_datetime(df['Дата окончания размещения'], format="%d.%m.%Y") + timedelta(days=PLACEMENT_END_ERROR)
+    df['Дата начала размещения'] = pd.to_datetime(df['Дата начала размещения'], format="%d.%m.%Y") - timedelta(days=PLACEMENT_ERROR)
+    df['Дата окончания размещения'] = pd.to_datetime(df['Дата окончания размещения'], format="%d.%m.%Y") + timedelta(days=PLACEMENT_ERROR)
     new_banners_sheet = []
     for _, row in df.iterrows():
         str_categ = row['Где размещается (или ID категории)']
@@ -188,6 +189,7 @@ def transform_banners_sheet(df, PLACEMENT_START_ERROR = 0, PLACEMENT_END_ERROR =
 
 def get_date_range_from_banners_sheet(df, PLACEMENT_ERROR = 0):
     '''
+    Получает даты начала и конца для запросов к Яндекс метрике
     Использует коэфициент ошибки, если установить 1, будет отнимать 1 день от нрачала размещения и добавлять 1 день к концу размещения, по умолчаю 0.
     
     '''
@@ -215,3 +217,11 @@ def get_views_from_categories(banners_df, category_data_df):
     new_df = pd.DataFrame(new_banners_sheet)
     ...
     return new_df
+
+
+def preparation_final_banner_report(banner_report_df):
+    banner_report_df = banner_report_df.drop(['Где размещается (или ID категории)', 'ym:pv:date', 'ym:pv:URLParamNameAndValue'], axis=1)
+    new_columns = {'ym:pv:pageviews': 'Клики','ym:pv:users': 'Уникальные клики','pageviews': 'Показы','users': 'Охват'}
+    banner_report_df = banner_report_df.rename(columns=new_columns)
+    ...
+    return banner_report_df
