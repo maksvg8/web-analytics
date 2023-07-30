@@ -13,7 +13,7 @@ from google.analytics.data_v1beta.types import (DateRange, Dimension, Filter,
 
 from custom_reports.modules.class_report import CustomReport
 
-from google_apis.cred.credentials import (DATA_DIRECTORY, GA4_ED_PROPERTY_ID, GA4_EM_PROPERTY_ID,
+from google_apis.cred.credentials import (GA4_ED_PROPERTY_ID, GA4_EM_PROPERTY_ID,
                          GOOGLE_CREDENTIALS_JSON_PATH)
 from google_apis.data_api.config.default_configuration import *
 
@@ -71,12 +71,12 @@ class GA4Report(CustomReport):
 
         return wrapper
 
-    def dim_filter(self):
+    def search_dim_filter(self):
         filter = FilterExpression(and_group=FilterExpressionList(expressions=[
             FilterExpression(filter=Filter(
-                field_name=field_name,
+                field_name=search_field_name,
                 string_filter=Filter.StringFilter(
-                    value=filters_value,
+                    value=search_field_name,
                     match_type=Filter.StringFilter.MatchType.FULL_REGEXP,
                 ))),
             # FilterExpression(filter=Filter(
@@ -155,7 +155,7 @@ class GA4Report(CustomReport):
                 date_ranges=[
                     DateRange(start_date=start_date_str, end_date=end_date_str)
                 ],
-                dimension_filter=self.dim_filter(),
+                dimension_filter=self.search_dim_filter(),
                 limit=limit_int,
                 offset=offset_int,
                 return_property_quota=True)

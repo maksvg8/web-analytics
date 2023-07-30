@@ -7,11 +7,11 @@
 filters_value_funnel = "add_shipping_info|add_payment_info|add_to_cart|begin_checkout|purchase|refund|remove_from_cart|repeat_order|select_item|view_cart|view_item|view_item_list"
 filters_value_transaction = "purchase"
 
-# field_name = "sessionSourceMedium"
-# filters_value = "(.*email.*)|(.*viber.*)"
+email_field_name = "sessionSourceMedium"
+email_filters_value = "(.*email.*)|(.*viber.*)"
 
-field_name = "eventName"
-filters_value = "search.*"
+search_field_name = "eventName"
+search_filters_value = "search.*"
 
 field_name1 = "itemPromotionId"
 filters_value1 = "(.*productsluck.*)|(.*146.*)"
