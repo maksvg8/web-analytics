@@ -2,20 +2,41 @@ import pandas as pd
 
 # Создаем датафрейм с данными
 data = {
-    'url': ['example.com/page1', 'example.com/page2', 'example.com/page3', 'other.com/4'],
-    'value': [10, 10, 10, 10]
+    'date': ['2023-07-22', '2023-07-20', '2023-07-24', '2023-07-25', '2023-07-26'],
+    'event_name': ['click', 'click', 'search', 'search', 'click'],
+    'clid': [101, 102, 101, 103, 104],
+    'total_events': [5, 5, 0, 2, 10]
 }
 
 df = pd.DataFrame(data)
 
-# Определите регулярное выражение
-str_categ = r'.*page.*'
 
-# Используйте str.extract() для получения совпадающих групп
-filtered_df = df[(df['url'].str.extract(str_categ, expand=False).notnull()) &(df['value'] >= 20)]
 
-# Суммируем значения столбца 'value'
-total_value = filtered_df['value'].sum()
-
+# Фильтруем строки по условиям
+filtered_df = df.loc[
+    ~df['clid'].isin(
+        df.loc[df['event_name'] == 'click', 'clid']
+    )
+]
 print(filtered_df)
-print("Total value:", total_value)
+
+# Создание датафрейма исключений
+# Отчет по запросам ботов
+# создание листа с куками ботов
+# Запись датафрейма исключений в csv
+
+
+
+
+# # Группируем по clid и проверяем, есть ли событие "search" для каждого clid
+# grouped = df.groupby('clid')['event_name'].apply(lambda x: 'click' not in x.values)
+# print(grouped)
+
+# # Фильтруем только те clid, у которых нет события "search"
+# filtered_clid = grouped[grouped].index.tolist()
+# print(filtered_clid)
+
+# # Отбираем строки с отфильтрованными clid
+# filtered_df = df[df['clid'].isin(filtered_clid)]
+
+# print(filtered_df)

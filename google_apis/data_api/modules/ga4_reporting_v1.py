@@ -76,7 +76,7 @@ class GA4Report(CustomReport):
             FilterExpression(filter=Filter(
                 field_name=search_field_name,
                 string_filter=Filter.StringFilter(
-                    value=search_field_name,
+                    value=search_filters_value,
                     match_type=Filter.StringFilter.MatchType.FULL_REGEXP,
                 ))),
             # FilterExpression(filter=Filter(
