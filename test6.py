@@ -1,42 +1,24 @@
 import pandas as pd
 
-# Создаем датафрейм с данными
 data = {
-    'date': ['2023-07-22', '2023-07-20', '2023-07-24', '2023-07-25', '2023-07-26'],
-    'event_name': ['click', 'click', 'search', 'search', 'click'],
-    'clid': [101, 102, 101, 103, 104],
-    'total_events': [5, 5, 0, 2, 10]
+    'user id': [1, 1, 2, 2, 3, 3],
+    'eventName': ['A', 'B', 'A', 'B', 'A', 'B'],
+    'eventName2': ['A', 'B', 'A', 'B', 'A', 'B'],
+    'value': [10, 20, 30, 40, 50, 60]
 }
-
 df = pd.DataFrame(data)
 
+# Транспонируем столбец 'eventName' и рассчитываем столбцы 'A' и 'B' для каждого 'user id'
+pivot_df = df.pivot_table(index='user id', columns='eventName', values='value', aggfunc='sum', fill_value=0)
+print(pivot_df)
+# Переименовываем столбцы и суммируем значения для столбца 'eventName'
+pivot_df.columns = ['A', 'B']
+pivot_df['sum'] = pivot_df['A'] + pivot_df['B']
+pivot_df = pivot_df.reset_index()
+print(pivot_df)
+from custom_reports.modules.class_report import CustomReport
 
+test = CustomReport('test','ed','test')
+test.overwriting_old_csv_report(pivot_df)
 
-# Фильтруем строки по условиям
-filtered_df = df.loc[
-    ~df['clid'].isin(
-        df.loc[df['event_name'] == 'click', 'clid']
-    )
-]
-print(filtered_df)
-
-# Создание датафрейма исключений
-# Отчет по запросам ботов
-# создание листа с куками ботов
-# Запись датафрейма исключений в csv
-
-
-
-
-# # Группируем по clid и проверяем, есть ли событие "search" для каждого clid
-# grouped = df.groupby('clid')['event_name'].apply(lambda x: 'click' not in x.values)
-# print(grouped)
-
-# # Фильтруем только те clid, у которых нет события "search"
-# filtered_clid = grouped[grouped].index.tolist()
-# print(filtered_clid)
-
-# # Отбираем строки с отфильтрованными clid
-# filtered_df = df[df['clid'].isin(filtered_clid)]
-
-# print(filtered_df)
+unique_ids = df['id'].unique().tolist() 
