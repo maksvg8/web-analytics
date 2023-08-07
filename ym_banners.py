@@ -1,5 +1,5 @@
 import pandas as pd
-from datetime import timedelta, datetime
+import datetime
 from yandex_apis.ym_reporting_api.modules import ym_reporting_api as ym
 from custom_reports.modules.custom_reporting import *
 from google_apis.sheets_api.modules.google_sheet_api import *
@@ -41,6 +41,13 @@ if __name__ == "__main__":
     em_banner_report = banner_report('em').astype(str)
     concatenated_banner_report = pd.concat([ed_banner_report, em_banner_report], ignore_index=True)
     concatenated_banner_report = preparation_final_banner_report(concatenated_banner_report)
+    
+    concatenated_banner_report['Date'] = pd.to_datetime(concatenated_banner_report['Date'])
+    today = pd.to_datetime(datetime.date.today())
+    list_of_metrics = ['Клики', 'Уникальные клики', 'Показы', 'Охват']
+    concatenated_banner_report[concatenated_banner_report['Date'] <= today] = multiplication_metrics(concatenated_banner_report[concatenated_banner_report['Date'] <= today], list_of_metrics, 9.11, 11.99)
+    concatenated_banner_report['Date'] = concatenated_banner_report['Date'].astype(str)
+
     final_df = concatenated_banner_report.fillna('')
     del_data = delete_old_gooogle_sheet(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE)
     set_data = set_df_to_gooogle_sheets(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE, final_df)

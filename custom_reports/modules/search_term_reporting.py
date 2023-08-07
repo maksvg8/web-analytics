@@ -50,4 +50,4 @@ def aggregate_search_terms(df):
     df["hit_timestamp"] = df["hit_timestamp"].astype(str)
     agg_dict = {'eventCount': 'sum','hit_timestamp': 'nunique', 'client_id_event' : 'nunique'}
     df_grouped = df.groupby(['search_term', 'eventName','date'], as_index=False, sort=False).agg(agg_dict)
-    return df
+    return df_grouped

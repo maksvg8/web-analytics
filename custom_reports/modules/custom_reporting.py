@@ -1,5 +1,6 @@
 import pandas as pd
-from datetime import timedelta, datetime
+import numpy as np
+import datetime
 import re
 from credentials import DATA_DIRECTORY
 from custom_reports.config.default_configuration import sourcePatterns
@@ -135,7 +136,6 @@ def merge_budget_and_costs_data(mergedCostDF, transformedPlannedBudgetDF):
     return finalDF
 
 
-
 def set_project_for_banners(project):
     if project == 'ed':
         sheet_range = BANNER_SHEET_ED_RANGE
@@ -163,8 +163,8 @@ def transform_banners_sheet(df, project, PLACEMENT_ERROR = 0):
     '''
     df['Проект'] = project
     df = df.drop(df[df['Итоговая ссылка с меткой'] == "Ошибка: Есть незаполненное поле"].index)
-    df['Дата начала размещения'] = pd.to_datetime(df['Дата начала размещения'], format="%d.%m.%Y") - timedelta(days=PLACEMENT_ERROR)
-    df['Дата окончания размещения'] = pd.to_datetime(df['Дата окончания размещения'], format="%d.%m.%Y") + timedelta(days=PLACEMENT_ERROR)
+    df['Дата начала размещения'] = pd.to_datetime(df['Дата начала размещения'], format="%d.%m.%Y") - datetime.timedelta(days=PLACEMENT_ERROR)
+    df['Дата окончания размещения'] = pd.to_datetime(df['Дата окончания размещения'], format="%d.%m.%Y") + datetime.timedelta(days=PLACEMENT_ERROR)
     new_banners_sheet = []
     for _, row in df.iterrows():
         str_categ = row['Где размещается (или ID категории)']
@@ -193,8 +193,8 @@ def get_date_range_from_banners_sheet(df, PLACEMENT_ERROR = 0):
     Использует коэфициент ошибки, если установить 1, будет отнимать 1 день от нрачала размещения и добавлять 1 день к концу размещения, по умолчаю 0.
     
     '''
-    start_date = (df['Дата начала размещения'].min() - timedelta(days=PLACEMENT_ERROR)).strftime('%Y-%m-%d')
-    end_date = (df['Дата окончания размещения'].max() + timedelta(days=PLACEMENT_ERROR)).strftime('%Y-%m-%d')
+    start_date = (df['Дата начала размещения'].min() - datetime.timedelta(days=PLACEMENT_ERROR)).strftime('%Y-%m-%d')
+    end_date = (df['Дата окончания размещения'].max() + datetime.timedelta(days=PLACEMENT_ERROR)).strftime('%Y-%m-%d')
     ...
     return start_date, end_date
 
@@ -225,3 +225,15 @@ def preparation_final_banner_report(banner_report_df):
     banner_report_df = banner_report_df.rename(columns=new_columns)
     ...
     return banner_report_df
+
+
+
+
+
+def multiplication_metrics(df, list_of_metrics, min_multiplier, max_multiplier):
+    df[list_of_metrics] = df[list_of_metrics].astype(float)
+    random_factors = np.random.uniform(min_multiplier, max_multiplier, size=(len(df), len(list_of_metrics)))
+    df[list_of_metrics] = (df[list_of_metrics] + 1) * random_factors
+    df[list_of_metrics] = df[list_of_metrics].round(0)
+    df[list_of_metrics] = df[list_of_metrics].astype(str)
+    return df

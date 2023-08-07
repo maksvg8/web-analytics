@@ -86,6 +86,22 @@ class GA4Report(CustomReport):
             # ))
         ]))
         return filter
+    
+    def email_dim_filter(self):
+        filter = FilterExpression(and_group=FilterExpressionList(expressions=[
+            FilterExpression(filter=Filter(
+                field_name=email_field_name,
+                string_filter=Filter.StringFilter(
+                    value=email_filters_value,
+                    match_type=Filter.StringFilter.MatchType.FULL_REGEXP,
+                ))),
+            # FilterExpression(filter=Filter(
+            #     field_name="unifiedPageScreen",
+            #     string_filter=Filter.StringFilter(value="(.*categ.*)|(/)",
+            #     match_type=Filter.StringFilter.MatchType.FULL_REGEXP,)
+            # ))
+        ]))
+        return filter
 
     @collect_quota
     def ga4_run_metadata_report_to_df(self):
@@ -155,7 +171,7 @@ class GA4Report(CustomReport):
                 date_ranges=[
                     DateRange(start_date=start_date_str, end_date=end_date_str)
                 ],
-                dimension_filter=self.search_dim_filter(),
+                dimension_filter=self.email_dim_filter(),
                 limit=limit_int,
                 offset=offset_int,
                 return_property_quota=True)

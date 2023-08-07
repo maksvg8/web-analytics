@@ -16,9 +16,34 @@ pivot_df.columns = ['A', 'B']
 pivot_df['sum'] = pivot_df['A'] + pivot_df['B']
 pivot_df = pivot_df.reset_index()
 print(pivot_df)
-from custom_reports.modules.class_report import CustomReport
 
-test = CustomReport('test','ed','test')
-test.overwriting_old_csv_report(pivot_df)
 
-unique_ids = df['id'].unique().tolist() 
+
+
+
+
+
+import pandas as pd
+import numpy as np
+
+# Создаем пример датафрейма
+data = {
+    'values1': [5.1, 10.7, 15.3, 20.8, 25.5],
+    'values2': [3.2, 7.6, 11.4, 16.2, 22.1]
+}
+
+df = pd.DataFrame(data)
+
+# Генерируем случайные числа из заданного диапазона
+random_factors = np.random.uniform(9.05, 11.13, size=(len(df), 2))
+
+# Умножаем выбранные столбцы на случайные числа
+df[['values1', 'values2']] = df[['values1', 'values2']] * random_factors
+
+# Округляем выбранные столбцы до целых чисел
+df[['values1', 'values2']] = df[['values1', 'values2']].round(0)
+
+print(df)
+
+lst = [3.2, 7.6, 11.4, 16.2, 22.1]
+print(len(lst))
