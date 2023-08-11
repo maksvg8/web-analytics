@@ -1,5 +1,5 @@
 import pandas as pd
-from datetime import timedelta, datetime
+import datetime
 from yandex_apis.ym_reporting_api.modules import ym_reporting_api as ym
 from custom_reports.modules.custom_reporting import *
 from google_apis.sheets_api.modules.google_sheet_api import *
@@ -9,7 +9,7 @@ from config import (COAST_SHEET_ID, COAST_SHEET_RANGE, PLAN_SHEET_ID, PLAN_SHEET
 def cost_report():
     cost_data = get_rows_from_gooogle_sheets(COAST_SHEET_ID, COAST_SHEET_RANGE)
     if cost_data.empty == True:
-        start_date = datetime.date.today() - timedelta(days=60)
+        start_date = datetime.date.today() - datetime.timedelta(days=60)
     else:
         backup_data = cost_data.copy(deep=True)
         last_cost_data = extract_cost_data_for_last_date(backup_data)

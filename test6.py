@@ -1,49 +1,49 @@
 import pandas as pd
-
-data = {
-    'user id': [1, 1, 2, 2, 3, 3],
-    'eventName': ['A', 'B', 'A', 'B', 'A', 'B'],
-    'eventName2': ['A', 'B', 'A', 'B', 'A', 'B'],
-    'value': [10, 20, 30, 40, 50, 60]
-}
-df = pd.DataFrame(data)
-
-# Транспонируем столбец 'eventName' и рассчитываем столбцы 'A' и 'B' для каждого 'user id'
-pivot_df = df.pivot_table(index='user id', columns='eventName', values='value', aggfunc='sum', fill_value=0)
-print(pivot_df)
-# Переименовываем столбцы и суммируем значения для столбца 'eventName'
-pivot_df.columns = ['A', 'B']
-pivot_df['sum'] = pivot_df['A'] + pivot_df['B']
-pivot_df = pivot_df.reset_index()
-print(pivot_df)
-
-
-
-
-
-
-
-import pandas as pd
 import numpy as np
+import time
+from credentials import DATA_DIRECTORY
+from custom_reports.modules.class_report import CustomReport
+from custom_reports.modules.custom_reporting import overwriting_csv
 
-# Создаем пример датафрейма
-data = {
-    'values1': [5.1, 10.7, 15.3, 20.8, 25.5],
-    'values2': [3.2, 7.6, 11.4, 16.2, 22.1]
-}
 
+# Создание датафрейма для примера
+data = {'A': [3, 1, 2, 1, 2],
+        'B': [6, 4, 5, 2, 3]}
 df = pd.DataFrame(data)
 
-# Генерируем случайные числа из заданного диапазона
-random_factors = np.random.uniform(9.05, 11.13, size=(len(df), 2))
+# Сортировка по столбцам 'A' и 'B'
+def aggregate_search_terms(df = pd.DataFrame(), file_name = ""):
+    total_time_start = time.time()
+    iter_time_start = time.time()
+    df.columns = ['eventName', 'hit_timestamp', 'search_term', 'client_id_event', 'eventCount']
+    df[['search_term', 'client_id_event']] = df[['search_term', 'client_id_event']].astype(object)
+    df['eventCount'] = df['eventCount'].astype(float)
+    df['search_term'] = df.search_term.str.lower().str.strip()
+    df['hit_timestamp'] = df.hit_timestamp.str.strip()
+    df["hit_timestamp"] = df["hit_timestamp"].str.replace('\+.*', '', regex=True)
+    df["hit_timestamp"] = df["hit_timestamp"].str.replace('-\d\d:.*', '', regex=True)
+    df["hit_timestamp"] = df["hit_timestamp"].str.replace('\..*', '', regex=True)
+    df["date"] = pd.to_datetime(df["hit_timestamp"].str.replace('T.*', '', regex=True), format='%Y-%m-%d')
+    df["hit_timestamp"] = pd.to_datetime(df["hit_timestamp"], format='%Y-%m-%dT%H:%M:%S')
+    df.insert(6, 'group', '')
+    print(000)
+    df = df.sort_values(by=['client_id_event','hit_timestamp'])
+    print(111)
 
-# Умножаем выбранные столбцы на случайные числа
-df[['values1', 'values2']] = df[['values1', 'values2']] * random_factors
+# перписать на плюс
+    mask1 = df['eventName'].eq(df['eventName'].shift(-1))
+    mask2 = df['client_id_event'].eq(df['client_id_event'].shift(-1))
+    mask3 = df['search_term'].astype(str).le(df['search_term'].shift(-1).astype(str))
+    mask4 = df['hit_timestamp'].lt(df['hit_timestamp'].shift(-1))
+    mask5 = (df['hit_timestamp'].shift(-1) - df['hit_timestamp']).dt.total_seconds().div(60).lt(10)
 
-# Округляем выбранные столбцы до целых чисел
-df[['values1', 'values2']] = df[['values1', 'values2']].round(0)
+    print(mask3)
+    df['group'] = ~(mask3)
 
-print(df)
+    df.loc[df.index[-1], 'group'] = True
+    df.to_csv(f"C:/Users/User/Desktop/project/data/2ttttt_{file_name}.csv",index=False)
 
-lst = [3.2, 7.6, 11.4, 16.2, 22.1]
-print(len(lst))
+
+if __name__ == "__main__":
+    df = pd.read_csv(f"{DATA_DIRECTORY}ed_default_search_term_july.csv")
+    aggregate_search_terms(df, "search_term_july")

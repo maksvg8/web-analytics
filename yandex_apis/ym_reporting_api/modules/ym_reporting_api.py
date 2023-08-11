@@ -11,6 +11,7 @@ from yandex_apis.cred.credentials import (
     YM_CLIENT_ID,
     YM_ED_COUNTER_ID,
     YM_EM_COUNTER_ID,
+    YM_EP_COUNTER_ID
 )
 
 from yandex_apis.ym_reporting_api.config.default_configuration import *
@@ -45,6 +46,8 @@ class YandexMetricReport(CustomReport):
             self.ym_counter_id = YM_ED_COUNTER_ID
         elif self.at_project_name == "em":
             self.ym_counter_id = YM_EM_COUNTER_ID
+        elif self.at_project_name == "ep":
+            self.ym_counter_id = YM_EP_COUNTER_ID
         else:
             raise ValueError("Invalid project name")
 
