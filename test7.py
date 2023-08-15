@@ -17,7 +17,7 @@ def test(c, *args):
 import pandas as pd
 import datetime
 from yandex_apis.ym_reporting_api.modules import ym_reporting_api as ym
-from custom_reports.modules.custom_reporting import *
+from custom_reports.modules.campaign_reporting import *
 from google_apis.sheets_api.modules.google_sheet_api import *
 from credentials import DATA_DIRECTORY
 from config import (COAST_SHEET_ID, COAST_SHEET_RANGE, PLAN_SHEET_ID, PLAN_SHEET_RANGE_JUNE, PLAN_SHEET_RANGE_JULY, PLAN_SHEET_RANGE_AUGUST, REPORT_SHEET_RANGE)
