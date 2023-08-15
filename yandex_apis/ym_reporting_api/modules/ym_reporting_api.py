@@ -11,7 +11,7 @@ from yandex_apis.cred.credentials import (
     YM_CLIENT_ID,
     YM_ED_COUNTER_ID,
     YM_EM_COUNTER_ID,
-    YM_EP_COUNTER_ID
+    YM_JB_COUNTER_ID
 )
 
 from yandex_apis.ym_reporting_api.config.default_configuration import *
@@ -21,7 +21,7 @@ class YandexMetricReport(CustomReport):
     """ """
 
     def __init__(
-        self, report_name: str, project_name: str = "ed", report_type: str = "default"
+        self, report_name: str, project_name: str = 'ED', report_type: str = "default"
     ):
         CustomReport.__init__(self, report_name, project_name, report_type)
         self.at_file_name: str = None
@@ -42,12 +42,12 @@ class YandexMetricReport(CustomReport):
         self.__check_report_type()
 
     def __set_report_source(self):
-        if self.at_project_name == "ed":
+        if self.at_project_name == 'ED':
             self.ym_counter_id = YM_ED_COUNTER_ID
-        elif self.at_project_name == "em":
+        elif self.at_project_name == 'EM':
             self.ym_counter_id = YM_EM_COUNTER_ID
-        elif self.at_project_name == "ep":
-            self.ym_counter_id = YM_EP_COUNTER_ID
+        elif self.at_project_name == 'JB':
+            self.ym_counter_id = YM_JB_COUNTER_ID
         else:
             raise ValueError("Invalid project name")
 
@@ -68,13 +68,17 @@ class YandexMetricReport(CustomReport):
     def __set_campaign_report_params(self):
         self.at_ym_dim = DIM_CAMPAIGN_REPORT
         self.at_ym_metr = METR_CAMPAIGN_REPORT
-        if self.at_project_name == "ed":
-            self.at_ym_metr += METR_ED_REGISTRATION
+        if self.at_project_name == 'ED':
+            self.at_ym_metr += ',' + METR_ED_REGISTRATION
             self.at_filters = FILTER_ED_CAMPAIGN
             ...
-        elif self.at_project_name == "em":
-            self.at_ym_metr += METR_EM_REGISTRATION
+        elif self.at_project_name == 'EM':
+            self.at_ym_metr += ',' + METR_EM_REGISTRATION
             self.at_filters = FILTER_EM_CAMPAIGN
+            ...
+        elif self.at_project_name == 'JB':
+            self.at_ym_metr = METR_CAMPAIGN_JB_REPORT + ',' + METR_JB_FORM
+            self.at_filters = FILTER_JB_CAMPAIGN
             ...
         else:
             raise ValueError("Invalid project name")
@@ -82,7 +86,7 @@ class YandexMetricReport(CustomReport):
     def __set_kufar_report_params(self):
         self.at_ym_dim = DIM_KUFAR_REPORT
         self.at_ym_metr = METR_KUFAR_REPORT
-        if self.at_project_name == "em":
+        if self.at_project_name == 'EM':
             self.at_ym_metr += METR_EM_REGISTRATION
             self.at_filters = FILTER_EM_KUFAR
             ...
@@ -93,10 +97,10 @@ class YandexMetricReport(CustomReport):
         self.at_ym_dim = DIM_EDADEAL_REPORT
         self.at_ym_metr = METR_EDADEAL_REPORT
         self.at_filters = FILTER_EDADEAL
-        if self.at_project_name == "ed":
+        if self.at_project_name == 'ED':
             self.at_ym_metr += METR_ED_REGISTRATION
             ...
-        elif self.at_project_name == "em":
+        elif self.at_project_name == 'EM':
             self.at_ym_metr += METR_EM_REGISTRATION
             ...
         else:
@@ -105,10 +109,10 @@ class YandexMetricReport(CustomReport):
     def __set_banner_report_params(self):
         self.at_ym_dim = DIM_BANNER_REPORT
         self.at_ym_metr = METR_BANNER_REPORT
-        if self.at_project_name == "ed":
+        if self.at_project_name == 'ED':
             self.at_filters = FILTER_ED_BANNER
             ...
-        elif self.at_project_name == "em":
+        elif self.at_project_name == 'EM':
             self.at_filters = FILTER_EM_BANNER
             ...
         else:

@@ -15,22 +15,22 @@ def fact_report(start_date, end_date):
         'Direction', 'Daily Budget'
     ]
     sum_columns = [
-        'Visits','Users', 'Purchases', 'Revenue', 'Registration', 'Clicks', 'Cost',
+        'Visits','Users', 'Purchases', 'Revenue', 'Registration', 'Goal', 'Clicks', 'Cost',
         'Impressions', 'Budget'
     ]
     report_data[sum_columns] = report_data[sum_columns].replace(',', '.', regex=True).astype(float)
     grouped_df = report_data.groupby(group_columns, as_index=False, sort=False, dropna=False).agg('sum')
     df_reindexed = grouped_df.reindex(columns=[
         'Project', 'Source', 'Direction', 'UTMCapaigne',
-        'Account Currency', 'Visits','Users', 'Purchases', 'Revenue', 'Registration',
+        'Account Currency', 'Visits','Users', 'Purchases', 'Revenue', 'Registration', 'Goal',
         'Clicks', 'Impressions', 'Daily Budget', 'Budget', 'Cost'
     ])
     df_reindexed = df_reindexed.fillna('')
-    del_data = delete_old_gooogle_sheet(FACT_SHEET_ID, "'Факт Июль'!A1:O")
-    set_data = set_df_to_gooogle_sheets(FACT_SHEET_ID, "'Факт Июль'!A1:O", df_reindexed)
+    delete_old_gooogle_sheet(FACT_SHEET_ID, "'Факт Август'!A1:P")
+    set_df_to_gooogle_sheets(FACT_SHEET_ID, "'Факт Август'!A1:P", df_reindexed)
 
 
 if __name__ == '__main__':
-    start_date = pd.to_datetime('2023-07-01')
-    end_date = pd.to_datetime('2023-07-31')
+    start_date = pd.to_datetime('2023-08-01')
+    end_date = pd.to_datetime('2023-08-31')
     fact_report(start_date, end_date)

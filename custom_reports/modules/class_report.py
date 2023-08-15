@@ -6,7 +6,7 @@ from credentials import DATA_DIRECTORY
 class CustomReport:
     def __init__(self,
                 report_name: str,
-                project_name: str = "ed",
+                project_name: str = "ED",
                 report_type: str = "default"):
         self.at_report_name: str = report_name
         self.at_project_name: str = project_name

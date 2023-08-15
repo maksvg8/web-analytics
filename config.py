@@ -24,7 +24,7 @@ METR_CAMPAIGN_REPORT = "ym:s:visits,ym:s:users,ym:s:ecommercePurchases,ym:s:ecom
 
 COAST_SHEET_ID = "1wJu2BI5SbtVJ64q3L3Fu0fUOe9JMU7D6-OxDYbTKhnQ"
 COAST_SHEET_RANGE = "'Для рассчетов'!A1:J"
-REPORT_SHEET_RANGE = "'Сведенный отчет'!A1:Q"
+REPORT_SHEET_RANGE = "'Сведенный отчет'!A1:Z"
 
 
 PLAN_SHEET_ID = "1_kqqoPJWbOd5hYlYm3cFeB5aKbS4e0SSvukWQGjCaKE"
