@@ -24,7 +24,10 @@ class CustomReport:
 
     
     def overwriting_old_csv_report(self, df=pd.DataFrame(), file_name=None):
-        # if the method was called without arguments, then the values from the attributes are used
+        '''if the method was called without arguments, then the values from the attributes are used
+
+        '''
+        # TODO Добавить возможность удаления дубликатов
         if df.empty == True:
             df = self.at_report_df
         if file_name is None:
