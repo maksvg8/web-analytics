@@ -2,6 +2,7 @@ import pandas as pd
 import datetime
 from yandex_apis.ym_reporting_api.modules import ym_reporting_api as ym
 from custom_reports.modules.campaign_reporting import *
+from custom_reports.modules.class_report import *
 from google_apis.sheets_api.modules.google_sheet_api import *
 from credentials import DATA_DIRECTORY
 from config import (COAST_SHEET_ID, COAST_SHEET_RANGE, PLAN_SHEET_ID, PLAN_SHEET_RANGE_JUNE, PLAN_SHEET_RANGE_JULY, PLAN_SHEET_RANGE_AUGUST, REPORT_SHEET_RANGE)
@@ -13,13 +14,13 @@ def cost_report():
     else:
         backup_data = cost_data.copy(deep=True)
         last_cost_data = extract_cost_data_for_last_date(backup_data)
-        overwriting_csv(last_cost_data, 'old_cost_data')
+        for_last_cost_date = CustomReport('old_cost_data')
+        for_last_cost_date.overwriting_old_csv_report(last_cost_data, 'old_cost_data', True, ['Day','Project','Source','Account Name','Campaign Name'])
         cost_data = cost_data[(cost_data['Project'] != 'GS')&(cost_data['Project'] != 'EU')]
         date_definitions = cost_data.copy(deep=True)
         date_definitions['Day'] = pd.to_datetime(date_definitions['Day'])
         start_date = date_definitions['Day'].min()
     start_date = start_date.strftime('%Y-%m-%d')
-    
 
     report_ed = ym.YandexMetricReport('ym_main_cost', 'ED', 'campaign_report')
     report_ed.at_start_date = start_date

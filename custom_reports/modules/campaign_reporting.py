@@ -15,19 +15,6 @@ def extract_cost_data_for_last_date(cost_data):
     last_cost_data = last_cost_data.reset_index(drop=True)
     return last_cost_data
 
-def overwriting_csv(data, file_name, duplicates = ['Day','Project','Source','Account Name','Campaign Name']):
-    # if the method was called without arguments, then the values from the attributes are used
-    try:
-        old_data = pd.read_csv(f"{DATA_DIRECTORY}{file_name}.csv")
-        data = pd.concat(
-            [old_data, data]).drop_duplicates(subset=duplicates)
-        data.to_csv(f"{DATA_DIRECTORY}{file_name}.csv",
-                                        index=False)
-    except:
-        data.to_csv(f"{DATA_DIRECTORY}{file_name}.csv",
-                                        index=False)
-    print("successful add data to csv")
-    return data
 
 def set_source_from_utm(df, sourceColumn, campaignColumn):
     sourceColumn = str(sourceColumn)

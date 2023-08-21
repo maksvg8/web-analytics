@@ -11,7 +11,7 @@ from google.analytics.data_v1beta.types import (DateRange, Dimension, Filter,
                                                 MetricType,
                                                 FilterExpressionList)
 
-from custom_reports.modules.class_report import CustomReport
+from custom_reports.modules.class_report import try_ping_google, CustomReport
 
 from google_apis.cred.credentials import (GA4_ED_PROPERTY_ID, GA4_EM_PROPERTY_ID,
                          GOOGLE_CREDENTIALS_JSON_PATH)
@@ -137,6 +137,7 @@ class GA4Report(CustomReport):
         except IOError as e:
             raise GA4Exception(e)
 
+    @try_ping_google
     @collect_quota
     def ga4_run_report_request(self,
                                limit_int: int = None,
@@ -171,7 +172,7 @@ class GA4Report(CustomReport):
                 date_ranges=[
                     DateRange(start_date=start_date_str, end_date=end_date_str)
                 ],
-                dimension_filter=self.email_dim_filter(),
+                dimension_filter=self.search_dim_filter(),
                 limit=limit_int,
                 offset=offset_int,
                 return_property_quota=True)
@@ -185,8 +186,10 @@ class GA4Report(CustomReport):
             self.at_ga4_response = response
             print("ga4_run_report_request - successful")
             return response, taken_rows_count, offset_int
+        # except Exception as e:
+        #     raise GA4Exception(e)
         except Exception as e:
-            raise GA4Exception(e)
+            raise e
 
     def ga4_response_to_df(self, response=None):
         # if the method was called without arguments, then the values from the attributes are used
@@ -283,21 +286,15 @@ class GA4Report(CustomReport):
 
     def ga4_all_rows_to_df(self):
         self.ga4_run_report_request()
-        try:
-            i = 1
-            while self.at_taken_rows_count + self.at_offset < self.at_all_respons_rows:
-                if self.at_all_respons_rows - (self.at_taken_rows_count +
-                                               self.at_offset) > 100000:
-                    self.at_limit = 100000
-                else:
-                    self.at_limit = self.at_all_respons_rows - (
-                        self.at_taken_rows_count + self.at_offset)
-                self.at_offset += self.at_taken_rows_count
-                report_df = self.at_report_df
-                self.ga4_run_report_request()
-                self.at_report_df = pd.concat([report_df, self.at_report_df])
-                i += 1
-        except:
-            raise "проблема с квотами"
-        finally:
-            return self.at_report_df
+        while self.at_taken_rows_count + self.at_offset < self.at_all_respons_rows:
+            if self.at_all_respons_rows - (self.at_taken_rows_count +
+                                            self.at_offset) > 100000:
+                self.at_limit = 100000
+            else:
+                self.at_limit = self.at_all_respons_rows - (
+                    self.at_taken_rows_count + self.at_offset)
+            self.at_offset += self.at_taken_rows_count
+            report_df = self.at_report_df
+            self.ga4_run_report_request()
+            self.at_report_df = pd.concat([report_df, self.at_report_df])
+        return self.at_report_df

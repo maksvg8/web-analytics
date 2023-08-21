@@ -16,7 +16,7 @@ else:
     end_date = '2023-07-23'
 
 
-report_em_kufar = ym.YandexMetricReport('ym_kufar', 'em', 'kufar_report')
+report_em_kufar = ym.YandexMetricReport('ym_kufar', 'EM', 'kufar_report')
 report_em_kufar.at_start_date = start_date
 report_em_kufar.at_end_date = end_date
 data_em = report_em_kufar.all_ym_rows_to_df()

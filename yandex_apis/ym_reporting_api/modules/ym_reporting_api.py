@@ -4,7 +4,7 @@ from typing import List
 import datetime
 import functools
 
-from custom_reports.modules.class_report import CustomReport
+from custom_reports.modules.class_report import CustomReport, try_ping_google
 
 from yandex_apis.cred.credentials import (
     YM_TOKEN,
@@ -18,7 +18,10 @@ from yandex_apis.ym_reporting_api.config.default_configuration import *
 
 
 class YandexMetricReport(CustomReport):
-    """ """
+    """ 
+    report typs: "default", "campaign_report", "kufar_report", "edadeal_report", "banner_report", "category_report"
+
+    """
 
     def __init__(
         self, report_name: str, project_name: str = 'ED', report_type: str = "default"
@@ -87,7 +90,7 @@ class YandexMetricReport(CustomReport):
         self.at_ym_dim = DIM_KUFAR_REPORT
         self.at_ym_metr = METR_KUFAR_REPORT
         if self.at_project_name == 'EM':
-            self.at_ym_metr += METR_EM_REGISTRATION
+            self.at_ym_metr += ',' + METR_EM_REGISTRATION
             self.at_filters = FILTER_EM_KUFAR
             ...
         else:
@@ -98,10 +101,10 @@ class YandexMetricReport(CustomReport):
         self.at_ym_metr = METR_EDADEAL_REPORT
         self.at_filters = FILTER_EDADEAL
         if self.at_project_name == 'ED':
-            self.at_ym_metr += METR_ED_REGISTRATION
+            self.at_ym_metr += ',' + METR_ED_REGISTRATION
             ...
         elif self.at_project_name == 'EM':
-            self.at_ym_metr += METR_EM_REGISTRATION
+            self.at_ym_metr += ',' + METR_EM_REGISTRATION
             ...
         else:
             raise ValueError("Invalid project name")
@@ -123,6 +126,7 @@ class YandexMetricReport(CustomReport):
         self.at_ym_metr = METR_CATEGORY_REPORT
         self.at_filters = FILTER_CATEGORY
 
+    @try_ping_google
     def ym_response(self):
         # параметры запроса
         params = {
@@ -163,7 +167,7 @@ class YandexMetricReport(CustomReport):
                     exit()
                 return data, self.at_total_rows
         except Exception as e:
-            print(type(e))
+            raise e
 
     def ym_response_to_df(self):
         dimensions = self.at_ym_data["query"]["dimensions"]

@@ -3,7 +3,6 @@ import numpy as np
 import time
 from credentials import DATA_DIRECTORY
 from custom_reports.modules.class_report import CustomReport
-from custom_reports.modules.custom_reporting import overwriting_csv
 
 def aggregate_search_terms(df = pd.DataFrame(), file_name = ""):
     total_time_start = time.time()
