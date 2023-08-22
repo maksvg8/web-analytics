@@ -30,7 +30,6 @@ class GA4Report(CustomReport):
                  project_name: str = "ed",
                  report_type: str = "default"):
         CustomReport.__init__(self,report_name, project_name, report_type)
-        self.at_file_name: str = None
         #
         self.at_ga4_dim_list: List[str] = None
         self.at_ga4_metr_list: List[str] = None

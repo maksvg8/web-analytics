@@ -27,7 +27,6 @@ class YandexMetricReport(CustomReport):
         self, report_name: str, project_name: str = 'ED', report_type: str = "default"
     ):
         CustomReport.__init__(self, report_name, project_name, report_type)
-        self.at_file_name: str = None
         self.ym_token: str = YM_TOKEN
         self.ym_client_id: str = YM_CLIENT_ID
         #

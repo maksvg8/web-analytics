@@ -16,25 +16,21 @@ from google_apis.data_api.config.default_configuration import (ga4_dim_banners, 
                     ga4_metr_sessionManualTerm,ga4_dim_search_term,ga4_metr_search_term,ga4_dim_custom,ga4_metr_custom)
 
 
-data = {'A': [3, 1, 2, 1, 2],
-        'B': [6, 4, 5, 2, 3]}
+import pandas as pd
 
-data2 = {'A': [3, 1, 2, 1, 123123123],
-        'B': [6, 12312, 5, 2, 3]}
+# Создаем DataFrame для примера
+data = {'Column1': [1, 2, 3],
+        'Column2': ['A', 'B', 'C']}
+df = pd.DataFrame(data)
 
+# Строка, которую вы хотите добавить
+new_row = [ 0, 'Z']
 
-df = pd.DataFrame(data2)
+# Добавляем строку в начало DataFrame
+df.loc[0] = new_row  # -1 для начального индекса
+# df.index = df.index + 1  # Сдвигаем все индексы на 1
+# df = df.sort_index()  # Сортируем DataFrame по индексу
 
-# test = ym.YandexMetricReport('sraka', 'ED', 'campaign_report')
-# data = test.all_ym_rows_to_df()
-report = ga4.GA4Report("ga4_1223123123123", "ed")
-report.at_start_date = "2023-07-01"
-report.at_end_date = "2023-08-20"
-report.at_ga4_dim_list = ga4_dim_search_term
-report.at_ga4_metr_list = ga4_metr_search_term
-df = report.ga4_all_rows_to_df()
 print(df)
-# report.try_ping_google()
-# report.overwriting_old_csv_report(data)
 
 
