@@ -10,6 +10,9 @@ filters_value_transaction = "purchase"
 email_field_name = "sessionSourceMedium"
 email_filters_value = "(.*email.*)|(.*viber.*)"
 
+card_field_name = "eventName"
+card_filters_value = "(add_to_cart)|(purchase)"
+
 search_field_name = "eventName"
 search_filters_value = "search.*"
 
@@ -35,6 +38,7 @@ ga4_dim_default = [
     # "customEvent:session_number_event",
     # "customEvent:client_id_event",
     # "customEvent:user_id_event",
+    "customEvent:client_id_event"
 ]
 
 ga4_metr_default = [
@@ -51,8 +55,9 @@ ga4_metr_default = [
 
 # for sign_up users report
 ga4_dim_ed_sign_up_users = [
-    # "date",
-    # "customEvent:sign_up_date",
+    "date",
+    "customEvent:hit_timestamp",
+    "eventName",
     # "eventName",
     # "browser",
     # "deviceCategory",
@@ -62,7 +67,8 @@ ga4_dim_ed_sign_up_users = [
     "customEvent:user_id_event"
 ]
 
-ga4_metr_ed_sign_up_users = ["eventCount", "totalPurchasers"]
+ga4_metr_ed_sign_up_users = ["eventCount"]
+# , "totalPurchasers"
 
 # for banners report
 ga4_dim_banners = [

@@ -27,7 +27,7 @@ class GA4Report(CustomReport):
     """
     def __init__(self,
                  report_name: str,
-                 project_name: str = "ed",
+                 project_name: str = "ED",
                  report_type: str = "default"):
         CustomReport.__init__(self,report_name, project_name, report_type)
         #
@@ -46,9 +46,9 @@ class GA4Report(CustomReport):
 
     def __set_report_source(self):
         self.at_credentials_json_path: str = GOOGLE_CREDENTIALS_JSON_PATH
-        if self.at_project_name == "ed":
+        if self.at_project_name == "ED":
             self.at_property_id: str = GA4_ED_PROPERTY_ID
-        elif self.at_project_name == "em":
+        elif self.at_project_name == "EM":
             self.at_property_id: str = GA4_EM_PROPERTY_ID
         else:
             raise "Invalid project name"
@@ -70,6 +70,22 @@ class GA4Report(CustomReport):
 
         return wrapper
 
+    def card_dim_filter(self):
+        filter = FilterExpression(and_group=FilterExpressionList(expressions=[
+            FilterExpression(filter=Filter(
+                field_name=card_field_name,
+                string_filter=Filter.StringFilter(
+                    value=card_filters_value,
+                    match_type=Filter.StringFilter.MatchType.FULL_REGEXP,
+                ))),
+            # FilterExpression(filter=Filter(
+            #     field_name="unifiedPageScreen",
+            #     string_filter=Filter.StringFilter(value="(.*categ.*)|(/)",
+            #     match_type=Filter.StringFilter.MatchType.FULL_REGEXP,)
+            # ))
+        ]))
+        return filter
+    
     def search_dim_filter(self):
         filter = FilterExpression(and_group=FilterExpressionList(expressions=[
             FilterExpression(filter=Filter(
@@ -171,7 +187,7 @@ class GA4Report(CustomReport):
                 date_ranges=[
                     DateRange(start_date=start_date_str, end_date=end_date_str)
                 ],
-                dimension_filter=self.search_dim_filter(),
+                dimension_filter=self.card_dim_filter(),
                 limit=limit_int,
                 offset=offset_int,
                 return_property_quota=True)
