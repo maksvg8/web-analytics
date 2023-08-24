@@ -29,7 +29,6 @@ class UrlTree(CustomReport):
         self.set_site_url()
         self.at_total_rows: int = None
 
-    
     def set_site_url(self):
         if self.at_project_name == 'ED':
             self.at_site_url = ED_SITE_URL
@@ -44,38 +43,49 @@ class UrlTree(CustomReport):
             raise "Invalid project name"
         return self.at_site_url, self.at_category_sitemap
 
-
     def create_primary_df(self):
         if self.at_project_name == 'ED':
             ...
         ...
         return self
-    
+
     def get_urls_from_sitemap(self):
         url = self.at_site_url + self.at_category_sitemap
-
-        print(url)
-        response = requests.post(url)
+        header = {
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+            'accept-encoding': 'gzip, deflate, br',
+            'accept-language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+            'cache-control': 'no-cache',
+            'dnt': '1',
+            'pragma': 'no-cache',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-site': 'none',
+            'sec-fetch-user': '?1',
+            'upgrade-insecure-requests': '1',
+            'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36'}
+        session = requests.Session()
+        session.headers = header
+        # response = requests.get(url, headers = header)
+        response = session.get(url)
         print(response.status_code)
         if response.status_code == 200:
             xml_content = response.content
-        
             root = ET.fromstring(xml_content)
             # print(root)
-            
+
             # Теперь вы можете работать с объектом 'root', который представляет собой корневой элемент XML.
             # Пример чтения элементов:
             headers = ['Site', 'Page_type', 'URL']
             rows = []
             for element in root:
-                rows.append(['EM', 'Category', element[0].text])
+                rows.append(
+                    [self.at_project_name, 'Category', element[0].text])
                 print(element[0].text)
             df = pd.DataFrame(rows, columns=headers)
             print(df)
             return df
         ...
         return
-    
 
     def selen_get_urls_from_sitemap(self):
         chrome_options = Options()
@@ -84,22 +94,22 @@ class UrlTree(CustomReport):
         url = self.at_site_url + self.at_category_sitemap
         driver.get(url)
         xml_content = driver.page_source
-        root = ET.fromstring(xml_content)
-        # print(root)
-        
-        # Теперь вы можете работать с объектом 'root', который представляет собой корневой элемент XML.
-        # Пример чтения элементов:
-        headers = ['Site', 'Page_type', 'URL']
-        rows = []
-        for element in root:
-            rows.append(['EM', 'Category', element[0].text])
-            print(element[0].text)
-        df = pd.DataFrame(rows, columns=headers)
-        print(df)
-        return df
-        
-    
+        # root = ET.fromstring(xml_content)
+        # # print(root)
+
+        # # Теперь вы можете работать с объектом 'root', который представляет собой корневой элемент XML.
+        # # Пример чтения элементов:
+        # headers = ['Site', 'Page_type', 'URL']
+        # rows = []
+        # for element in root:
+        #     rows.append(['EM', 'Category', element[0].text])
+        #     print(element[0].text)
+        # df = pd.DataFrame(rows, columns=headers)
+        # print(df)
+        return xml_content
+
+
 if __name__ == '__main__':
-    test = UrlTree()
-    xml = test.selen_get_urls_from_sitemap()
+    test = UrlTree(project_name='ED')
+    xml = test.get_urls_from_sitemap()
     print(xml)
