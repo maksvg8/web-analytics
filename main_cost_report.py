@@ -60,7 +60,6 @@ def cost_report():
     final_df = final_df.fillna('')
     delete_old_gooogle_sheet(COAST_SHEET_ID, REPORT_SHEET_RANGE)
     set_df_to_gooogle_sheets(COAST_SHEET_ID, REPORT_SHEET_RANGE, final_df)
-    print(111)
-    
+    print('Main cost report complete')
 if __name__ == "__main__":
     cost_report()

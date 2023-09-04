@@ -1,20 +1,7 @@
-# from selenium import webdriver
-# from selenium.webdriver.common.by import By
-# from selenium.webdriver.chrome.options import Options
-
-
-# chrome_options = Options()
-# chrome_options.add_argument("--disable-extensions")
-# driver = webdriver.Chrome(options=chrome_options)
-
-
-# driver.implicitly_wait(10)
-# driver.get("https://emall.by/product/1841913")
-# test =  driver.execute_script("return dataLayer;")
-
+import requests
 import pandas as pd
 import datetime
-from selenium import webdriver
+from my_selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
@@ -39,17 +26,15 @@ driver.get("https://edostavka.by/sitemap/categories.xml")
 # test = driver.execute_script("return dataLayer;")
 # print(test)
 
-import requests
-
 url = "https://edostavka.by/sitemap/categories.xml"
 response = requests.get(url)
 
 if response.status_code == 200:
     xml_content = response.content
-    
+
     root = ET.fromstring(xml_content)
     # print(root)
-    
+
     # Теперь вы можете работать с объектом 'root', который представляет собой корневой элемент XML.
     # Пример чтения элементов:
     headers = ['Site', 'Page_type', 'URL']
@@ -62,3 +47,18 @@ if response.status_code == 200:
 else:
     print("Failed to retrieve the XML data.")
 # https://edostavka.by/sitemap/6QUxaY.xml
+
+
+# from selenium import webdriver
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.chrome.options import Options
+
+
+# chrome_options = Options()
+# chrome_options.add_argument("--disable-extensions")
+# driver = webdriver.Chrome(options=chrome_options)
+
+
+# driver.implicitly_wait(10)
+# driver.get("https://emall.by/product/1841913")
+# test =  driver.execute_script("return dataLayer;")

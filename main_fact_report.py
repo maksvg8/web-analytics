@@ -26,8 +26,8 @@ def fact_report(start_date, end_date):
         'Clicks', 'Impressions', 'Daily Budget', 'Budget', 'Cost'
     ])
     df_reindexed = df_reindexed.fillna('')
-    delete_old_gooogle_sheet(FACT_SHEET_ID, "'Факт Август'!A1:P")
-    set_df_to_gooogle_sheets(FACT_SHEET_ID, "'Факт Август'!A1:P", df_reindexed)
+    delete_old_gooogle_sheet(FACT_SHEET_ID, "'Факт Август'!A1:Q")
+    set_df_to_gooogle_sheets(FACT_SHEET_ID, "'Факт Август'!A1:Q", df_reindexed)
 
 
 if __name__ == '__main__':
