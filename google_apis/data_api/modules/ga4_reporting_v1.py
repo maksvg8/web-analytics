@@ -71,6 +71,22 @@ class GA4Report(CustomReport):
 
         return wrapper
 
+    def card_dim_filter(self):
+        filter = FilterExpression(and_group=FilterExpressionList(expressions=[
+            FilterExpression(filter=Filter(
+                field_name=card_field_name,
+                string_filter=Filter.StringFilter(
+                    value=card_filters_value,
+                    match_type=Filter.StringFilter.MatchType.FULL_REGEXP,
+                ))),
+            # FilterExpression(filter=Filter(
+            #     field_name="unifiedPageScreen",
+            #     string_filter=Filter.StringFilter(value="(.*categ.*)|(/)",
+            #     match_type=Filter.StringFilter.MatchType.FULL_REGEXP,)
+            # ))
+        ]))
+        return filter
+    
     def search_dim_filter(self):
         filter = FilterExpression(and_group=FilterExpressionList(expressions=[
             FilterExpression(filter=Filter(

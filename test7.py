@@ -34,3 +34,37 @@ df.loc[0] = new_row  # -1 для начального индекса
 print(df)
 
 
+
+import random
+
+class Warrior:
+    def __init__(self, name):
+        self.name = name
+        self.health = 100
+
+    def attack(self, enemy):
+        print(f"{self.name} атакует {enemy.name}!")
+        enemy.health -= 20
+        print(f"У {enemy.name} осталось {enemy.health} здоровья.")
+
+    def is_alive(self):
+        return self.health > 0
+
+# Создание двух юнитов
+unit1 = Warrior("Юнит 1")
+unit2 = Warrior("Юнит 2")
+
+# Поочередные атаки до тех пор, пока один из юнитов не умрет
+while unit1.is_alive() and unit2.is_alive():
+    attacker = random.choice([unit1, unit2])
+    enemy = unit2 if attacker == unit1 else unit1
+    attacker.attack(enemy)
+
+# Определение победителя
+if unit1.is_alive():
+    print(f"{unit1.name} победил!")
+else:
+    print(f"{unit2.name} победил!")
+
+
+
