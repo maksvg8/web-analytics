@@ -14,7 +14,7 @@ from google.analytics.data_v1beta.types import (DateRange, Dimension, Filter,
 from custom_reports.modules.class_report import try_ping_google, CustomReport
 
 from google_apis.cred.credentials import (GA4_ED_PROPERTY_ID, GA4_EM_PROPERTY_ID,
-                         GOOGLE_CREDENTIALS_JSON_PATH)
+                                          GOOGLE_CREDENTIALS_JSON_PATH)
 from google_apis.data_api.config.default_configuration import *
 
 
@@ -25,11 +25,12 @@ class GA4Exception(Exception):
 class GA4Report(CustomReport):
     """
     """
+
     def __init__(self,
                  report_name: str,
                  project_name: str = "ED",
                  report_type: str = "default"):
-        CustomReport.__init__(self,report_name, project_name, report_type)
+        CustomReport.__init__(self, report_name, project_name, report_type)
         #
         self.at_ga4_dim_list: List[str] = None
         self.at_ga4_metr_list: List[str] = None
@@ -101,7 +102,7 @@ class GA4Report(CustomReport):
             # ))
         ]))
         return filter
-    
+
     def email_dim_filter(self):
         filter = FilterExpression(and_group=FilterExpressionList(expressions=[
             FilterExpression(filter=Filter(
@@ -216,7 +217,7 @@ class GA4Report(CustomReport):
         rows = []
         for row in response.rows:
             rows.append(
-                [dimension_value.value for dimension_value in row.dimension_values] + \
+                [dimension_value.value for dimension_value in row.dimension_values] +
                 [metric_value.value for metric_value in row.metric_values])
         ga4_new_pd_report_df = pd.DataFrame(rows, columns=headers)
         all_respons_rows = response.row_count
@@ -303,7 +304,7 @@ class GA4Report(CustomReport):
         self.ga4_run_report_request()
         while self.at_taken_rows_count + self.at_offset < self.at_all_respons_rows:
             if self.at_all_respons_rows - (self.at_taken_rows_count +
-                                            self.at_offset) > 100000:
+                                           self.at_offset) > 100000:
                 self.at_limit = 100000
             else:
                 self.at_limit = self.at_all_respons_rows - (

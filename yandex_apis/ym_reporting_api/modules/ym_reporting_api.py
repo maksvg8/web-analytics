@@ -194,7 +194,8 @@ class YandexMetricReport(CustomReport):
                     self.at_limit = 100000
                 else:
                     self.at_limit = (
-                        self.at_total_rows - (self.at_limit + self.at_offset) - 1
+                        self.at_total_rows -
+                        (self.at_limit + self.at_offset) - 1
                     )
                 report_df = self.at_report_df
                 self.request_ym_data()

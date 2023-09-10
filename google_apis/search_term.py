@@ -57,6 +57,35 @@ def aggregate_search_terms(df = pd.DataFrame(), file_name = ""):
     print('total_',(total_time_start - time.time())/ 60)
 
     df.loc[df.index[-1], 'group'] = True
+
+
+    # for row in df.itertuples(index=False):
+    #     mask1 = df['eventName'].iloc[i] == df['eventName'].iloc[i+1]
+    #     mask2 = df['client_id_event'].iloc[i] == df['client_id_event'].iloc[i+1]
+    #     mask3 = str(df['search_term'].iloc[i]) in str(df['search_term'].iloc[i+1])
+    #     mask4 = df['hit_timestamp'].iloc[i] < df['hit_timestamp'].iloc[i+1]
+    #     mask5 = (df['hit_timestamp'].iloc[i+1] - df['hit_timestamp'].iloc[i]).total_seconds() / 60 < 10
+    #     if mask1 and mask2 and mask3 and mask4 and mask5:
+    #         df.iloc[i, df.columns.get_loc('group')] = False
+    #     else:
+    #         df.iloc[i, df.columns.get_loc('group')] = True
+    #     i += 1
+    #     if i%1000 == 0:
+    #         iter_time_1000 = time.time()
+    #         print(i,'_',(iter_time_1000 - iter_time_start))
+    #     elif i%100000 == 0:
+    #         iter_time_100t = time.time()
+    #         print(i,'_',(iter_time_100t - iter_time_start) / 60)
+    #         iter_time_start
+    # print('total_',(total_time_start - time.time())/ 60)
+
+    # df.loc[df.index[-1], 'group'] = True
+
+
+
+
+
+
     
     df.to_csv(f"C:/Users/User/Desktop/project/data/2ttttt_{file_name}.csv",index=False)
     print(222)
