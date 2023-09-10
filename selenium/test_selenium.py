@@ -14,12 +14,14 @@
 
 import pandas as pd
 import datetime
+import concurrent.futures
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import xml.etree.ElementTree as ET
+
 
 chrome_options = Options()
 chrome_options.add_argument("--disable-extensions")
@@ -46,19 +48,27 @@ response = requests.get(url)
 
 if response.status_code == 200:
     xml_content = response.content
-    
+
     root = ET.fromstring(xml_content)
     # print(root)
-    
+
     # Теперь вы можете работать с объектом 'root', который представляет собой корневой элемент XML.
     # Пример чтения элементов:
-    headers = ['Site', 'Page_type', 'URL']
+    headers = ["Site", "Page_type", "URL"]
     rows = []
     for element in root:
-        rows.append(['EM', 'Category', element[0].text])
+        rows.append(["EM", "Category", element[0].text])
         print(element[0].text)
     df = pd.DataFrame(rows, columns=headers)
     print(df)
 else:
     print("Failed to retrieve the XML data.")
 # https://edostavka.by/sitemap/6QUxaY.xml
+
+
+# with concurrent.futures.ThreadPoolExecutor() as executor:
+#     futures = []
+#     for url in wiki_page_urls:
+#         futures.append(executor.submit(get_wiki_page_existence, wiki_page_url=url))
+#     for future in concurrent.futures.as_completed(futures):
+#         print(future.result())

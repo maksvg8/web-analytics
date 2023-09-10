@@ -5,7 +5,7 @@ from config import (COAST_SHEET_ID, COAST_SHEET_RANGE, PLAN_SHEET_ID,
                     PLAN_SHEET_RANGE_JUNE, REPORT_SHEET_RANGE, FACT_SHEET_ID)
 
 def fact_report(start_date, end_date):
-    report_data = get_rows_from_gooogle_sheets(COAST_SHEET_ID, REPORT_SHEET_RANGE)
+    report_data = extract_rows_from_gooogle_sheets(COAST_SHEET_ID, REPORT_SHEET_RANGE)
     report_data["Date"] = pd.to_datetime(report_data["Date"])
     report_data = report_data[(report_data['Date'] >= start_date)&(report_data['Date'] <= end_date)]
 
@@ -26,8 +26,8 @@ def fact_report(start_date, end_date):
         'Clicks', 'Impressions', 'Daily Budget', 'Budget', 'Cost'
     ])
     df_reindexed = df_reindexed.fillna('')
-    delete_old_gooogle_sheet(FACT_SHEET_ID, "'Факт Август'!A1:P")
-    set_df_to_gooogle_sheets(FACT_SHEET_ID, "'Факт Август'!A1:P", df_reindexed)
+    clear_old_gooogle_sheet(FACT_SHEET_ID, "'Факт Август'!A1:P")
+    add_df_to_gooogle_sheets(FACT_SHEET_ID, "'Факт Август'!A1:P", df_reindexed)
 
 
 if __name__ == '__main__':

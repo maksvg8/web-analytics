@@ -7,7 +7,7 @@ from config import (COAST_SHEET_ID, COAST_SHEET_RANGE, PLAN_SHEET_ID,
                     PLAN_SHEET_RANGE_JUNE, REPORT_SHEET_RANGE, FACT_SHEET_ID)
 
 def test_df():
-    report_data = get_rows_from_gooogle_sheets(COAST_SHEET_ID, REPORT_SHEET_RANGE)
+    report_data = extract_rows_from_gooogle_sheets(COAST_SHEET_ID, REPORT_SHEET_RANGE)
     if report_data.empty == False:
         report_data['Date'] = pd.to_datetime(report_data['Date'])
         start_date = report_data['Date'].min()

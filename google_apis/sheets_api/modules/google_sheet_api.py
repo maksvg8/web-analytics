@@ -8,7 +8,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from google_apis.cred.credentials import GOOGLE_CREDENTIALS_JSON_PATH
 
 
-def get_service_google_sheets():
+def __get_service_google_sheets():
     '''
     Создание учетной записи
     TODO: 
@@ -24,7 +24,7 @@ def get_service_google_sheets():
     return build('sheets', 'v4', http=creds_service)
 
 
-def get_rows_from_gooogle_sheets(sheet_id, sheet_range):
+def extract_rows_from_gooogle_sheets(sheet_id, sheet_range):
     """
     Может читать данные из таблицы
     Для подключения к таблице необходимо выдать доступ на почту сервисного аккаунта с правами редактора
@@ -34,7 +34,7 @@ def get_rows_from_gooogle_sheets(sheet_id, sheet_range):
     sheetRange - указываем с какого листа и какой размер таблицы выгружаем, пример: "'Для рассчетов'!A1:J"
     
     """
-    sheet = get_service_google_sheets().spreadsheets()
+    sheet = __get_service_google_sheets().spreadsheets()
     
     # https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get
     try:
@@ -56,8 +56,8 @@ def get_rows_from_gooogle_sheets(sheet_id, sheet_range):
         return pd.DataFrame()
 
     
-def set_df_to_gooogle_sheets(sheet_id, sheet_range, df):
-    service = get_service_google_sheets()
+def add_df_to_gooogle_sheets(sheet_id, sheet_range, df):
+    service = __get_service_google_sheets()
     values = [df.columns.tolist()] + df.values.tolist()
     body = {'values': values}
     request = service.spreadsheets().values().update(spreadsheetId=sheet_id, range=sheet_range, valueInputOption ='RAW', body = body)
@@ -66,9 +66,9 @@ def set_df_to_gooogle_sheets(sheet_id, sheet_range, df):
     return response
 
 
-def delete_old_gooogle_sheet(sheet_id, sheet_range):
+def clear_old_gooogle_sheet(sheet_id, sheet_range):
     batch_clear_values_request_body = {'ranges': [sheet_range]}
-    service = get_service_google_sheets()
+    service = __get_service_google_sheets()
     request = service.spreadsheets().values().batchClear(spreadsheetId=sheet_id, body=batch_clear_values_request_body)
     response = request.execute()
     ...

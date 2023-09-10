@@ -187,7 +187,7 @@ class GA4Report(CustomReport):
                 date_ranges=[
                     DateRange(start_date=start_date_str, end_date=end_date_str)
                 ],
-                dimension_filter=self.card_dim_filter(),
+                dimension_filter=self.email_dim_filter(),
                 limit=limit_int,
                 offset=offset_int,
                 return_property_quota=True)

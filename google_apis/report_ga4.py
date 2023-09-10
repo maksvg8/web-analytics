@@ -9,9 +9,9 @@ from google_apis.data_api.config.default_configuration import (ga4_dim_banners, 
 from search_term import aggregate_search_terms
 
 # report = ga4.GA4Report("search_term_july", "ed")
-report = ga4.GA4Report("ga4_mail_july", "EM")
-report.at_start_date = "2023-07-01"
-report.at_end_date = "2023-07-31"
+report = ga4.GA4Report("ga4_mail_aug", "EM")
+report.at_start_date = "2023-08-01"
+report.at_end_date = "2023-08-31"
 # report.at_ga4_dim_list = ga4_dim_search_term
 # report.at_ga4_metr_list = ga4_metr_search_term
 report.at_ga4_dim_list = ga4_dim_transaction_email
