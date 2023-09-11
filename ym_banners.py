@@ -8,7 +8,7 @@ from config import (BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE)
 
 def banner_report(project, PLACEMENT_ERROR = 0):
     sheet_range, re_banner_parameter = set_project_for_banners(project)
-    banners = get_rows_from_gooogle_sheets(BANNER_SHEET_ID, sheet_range)
+    banners = extract_rows_from_gooogle_sheets(BANNER_SHEET_ID, sheet_range)
     banners = transform_banners_sheet(banners, project, PLACEMENT_ERROR)
 
     banners = extract_banners_parameters(banners, re_banner_parameter)
@@ -51,5 +51,5 @@ if __name__ == "__main__":
     concatenated_banner_report['Date'] = concatenated_banner_report['Date'].astype(str)
 
     final_df = concatenated_banner_report.fillna('')
-    del_data = delete_old_gooogle_sheet(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE)
-    set_data = set_df_to_gooogle_sheets(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE, final_df)
+    del_data = clear_old_gooogle_sheet(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE)
+    set_data = add_df_to_gooogle_sheets(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE, final_df)

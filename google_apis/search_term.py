@@ -19,7 +19,8 @@ def aggregate_search_terms(df = pd.DataFrame(), file_name = ""):
     df.insert(6, 'group', '')
     print(000)
     df = df.sort_values(by=['client_id_event','hit_timestamp']).reset_index(drop=True)
-    print(df.head(-25))
+    print(111)
+    print(df.head())
 
 
     # mask1 = df['eventName'].shift(-1) == df['eventName']
@@ -48,10 +49,11 @@ def aggregate_search_terms(df = pd.DataFrame(), file_name = ""):
         if i%1000 == 0:
             iter_time_1000 = time.time()
             print(i,'_',(iter_time_1000 - iter_time_start))
+            iter_time_start = iter_time_1000
         elif i%100000 == 0:
             iter_time_100t = time.time()
             print(i,'_',(iter_time_100t - iter_time_start) / 60)
-            iter_time_start
+            iter_time_start = iter_time_100t
     print('total_',(total_time_start - time.time())/ 60)
 
     df.loc[df.index[-1], 'group'] = True

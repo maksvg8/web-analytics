@@ -4,7 +4,7 @@ from yandex_apis.ym_reporting_api.modules import ym_reporting_api as ym
 from google_apis.sheets_api.modules.google_sheet_api import *
 from config import (KUFAR_SHEET_ID, KUFAR_SHEET_RANGE)
 
-report_data = get_rows_from_gooogle_sheets(KUFAR_SHEET_ID, KUFAR_SHEET_RANGE)
+report_data = extract_rows_from_gooogle_sheets(KUFAR_SHEET_ID, KUFAR_SHEET_RANGE)
 if report_data.empty == False:
     report_data['Дата'] = pd.to_datetime(report_data['Дата'])
     start_date = report_data['Дата'].max() + timedelta(days=1)
@@ -25,6 +25,6 @@ data_em.columns = [
     'Визиты','Пользователи', 'Покупки', 'Доход', 'Регистрации'
 ]
 final_df = data_em.fillna('')
-del_data = delete_old_gooogle_sheet(KUFAR_SHEET_ID, KUFAR_SHEET_RANGE)
-set_data = set_df_to_gooogle_sheets(KUFAR_SHEET_ID, KUFAR_SHEET_RANGE, final_df)
+del_data = clear_old_gooogle_sheet(KUFAR_SHEET_ID, KUFAR_SHEET_RANGE)
+set_data = add_df_to_gooogle_sheets(KUFAR_SHEET_ID, KUFAR_SHEET_RANGE, final_df)
 print(111)

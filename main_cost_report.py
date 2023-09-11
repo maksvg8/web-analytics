@@ -17,8 +17,8 @@ from config import (
 
 
 def cost_report():
-    cost_data = get_rows_from_gooogle_sheets(COAST_SHEET_ID, COAST_SHEET_RANGE)
-    if cost_data.empty == True:
+    cost_data = extract_rows_from_gooogle_sheets(COAST_SHEET_ID, COAST_SHEET_RANGE)
+    if cost_data.empty:
         start_date = datetime.date.today() - datetime.timedelta(days=60)
     else:
         backup_data = cost_data.copy(deep=True)
@@ -59,9 +59,9 @@ def cost_report():
     merged_df = merge_ym_capaigne_df_and_costs_data(concatenated_ym_df, cost_data)
 
     # Получение данных бюджета
-    plan_date_june = get_rows_from_gooogle_sheets(PLAN_SHEET_ID, PLAN_SHEET_RANGE_JUNE)
-    plan_date_july = get_rows_from_gooogle_sheets(PLAN_SHEET_ID, PLAN_SHEET_RANGE_JULY)
-    plan_date_august = get_rows_from_gooogle_sheets(
+    plan_date_june = extract_rows_from_gooogle_sheets(PLAN_SHEET_ID, PLAN_SHEET_RANGE_JUNE)
+    plan_date_july = extract_rows_from_gooogle_sheets(PLAN_SHEET_ID, PLAN_SHEET_RANGE_JULY)
+    plan_date_august = extract_rows_from_gooogle_sheets(
         PLAN_SHEET_ID, PLAN_SHEET_RANGE_AUGUST
     )
 
@@ -84,9 +84,10 @@ def cost_report():
 
     # Подготовка к загрузке в гугл таблицы
     final_df = final_df.fillna("")
-    delete_old_gooogle_sheet(COAST_SHEET_ID, REPORT_SHEET_RANGE)
-    set_df_to_gooogle_sheets(COAST_SHEET_ID, REPORT_SHEET_RANGE, final_df)
-    print('Main cost report complete')
+    clear_old_gooogle_sheet(COAST_SHEET_ID, REPORT_SHEET_RANGE)
+    add_df_to_gooogle_sheets(COAST_SHEET_ID, REPORT_SHEET_RANGE, final_df)
+    print(111)
+
 
 if __name__ == "__main__":
     cost_report()

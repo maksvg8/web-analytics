@@ -126,7 +126,7 @@ class YandexMetricReport(CustomReport):
         self.at_filters = FILTER_CATEGORY
 
     @try_ping_google
-    def ym_response(self):
+    def request_ym_data(self):
         # параметры запроса
         params = {
             "dimensions": self.at_ym_dim,
@@ -167,8 +167,10 @@ class YandexMetricReport(CustomReport):
                 return data, self.at_total_rows
         except Exception as e:
             raise e
+        # finally:
+        #     return self.at_report_df
 
-    def ym_response_to_df(self):
+    def transform_ym_response_to_df(self):
         dimensions = self.at_ym_data["query"]["dimensions"]
         metrics = self.at_ym_data["query"]["metrics"]
         rows = self.at_ym_data["data"]
@@ -183,9 +185,9 @@ class YandexMetricReport(CustomReport):
         return df
 
     def all_ym_rows_to_df(self):
-        self.ym_response()
-        self.ym_response_to_df()
         try:
+            self.request_ym_data()
+            self.transform_ym_response_to_df()
             while (self.at_limit + self.at_offset) - 1 < self.at_total_rows:
                 self.at_offset += self.at_limit
                 if self.at_total_rows >= 100000 + self.at_offset - 1:
@@ -196,10 +198,15 @@ class YandexMetricReport(CustomReport):
                         (self.at_limit + self.at_offset) - 1
                     )
                 report_df = self.at_report_df
-                self.ym_response()
-                self.ym_response_to_df()
+                self.request_ym_data()
+                self.transform_ym_response_to_df()
                 self.at_report_df = pd.concat([report_df, self.at_report_df])
-        except:
-            raise "проблема с подключением"
+        except Exception as e:
+            raise e
         finally:
             return self.at_report_df
+        
+if __name__ == '__main__':
+    test = YandexMetricReport('t_test')
+    resp = test.all_ym_rows_to_df()
+    print(resp)
