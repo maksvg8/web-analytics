@@ -18,8 +18,8 @@ def aggregate_search_terms(df = pd.DataFrame(), file_name = ""):
     df["hit_timestamp"] = pd.to_datetime(df["hit_timestamp"], format='%Y-%m-%dT%H:%M:%S')
     df.insert(6, 'group', '')
     print(000)
-    df = df.sort_values(by=['client_id_event','hit_timestamp'])
-    print(111)
+    df = df.sort_values(by=['client_id_event','hit_timestamp']).reset_index(drop=True)
+    print(df.head(-25))
 
 
     # mask1 = df['eventName'].shift(-1) == df['eventName']
