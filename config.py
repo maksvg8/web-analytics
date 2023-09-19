@@ -31,6 +31,7 @@ PLAN_SHEET_ID = "1_kqqoPJWbOd5hYlYm3cFeB5aKbS4e0SSvukWQGjCaKE"
 PLAN_SHEET_RANGE_JUNE = "'Для выгрузки Июнь'!A1:G"
 PLAN_SHEET_RANGE_JULY = "'Для выгрузки Июль'!A1:G"
 PLAN_SHEET_RANGE_AUGUST = "'Для выгрузки Август'!A1:G"
+PLAN_SHEET_RANGE_SEPTEMBER = "'Для выгрузки Сентябрь'!A1:G"
 
 FACT_SHEET_ID = "19ILZ3UQggDNJveiDoOy9ZRjLU6OM1TFlUiEilHCtbbM"
 

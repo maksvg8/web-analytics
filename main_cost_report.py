@@ -12,6 +12,7 @@ from config import (
     PLAN_SHEET_RANGE_JUNE,
     PLAN_SHEET_RANGE_JULY,
     PLAN_SHEET_RANGE_AUGUST,
+    PLAN_SHEET_RANGE_SEPTEMBER,
     REPORT_SHEET_RANGE,
 )
 
@@ -61,9 +62,8 @@ def cost_report():
     # Получение данных бюджета
     plan_date_june = extract_rows_from_gooogle_sheets(PLAN_SHEET_ID, PLAN_SHEET_RANGE_JUNE)
     plan_date_july = extract_rows_from_gooogle_sheets(PLAN_SHEET_ID, PLAN_SHEET_RANGE_JULY)
-    plan_date_august = extract_rows_from_gooogle_sheets(
-        PLAN_SHEET_ID, PLAN_SHEET_RANGE_AUGUST
-    )
+    plan_date_august = extract_rows_from_gooogle_sheets(PLAN_SHEET_ID, PLAN_SHEET_RANGE_AUGUST)
+    plan_date_september = extract_rows_from_gooogle_sheets(PLAN_SHEET_ID, PLAN_SHEET_RANGE_SEPTEMBER)
 
     # Преобразование бюджетов для последующего объединения
     plan_df_june = transform_planned_budget_df(
@@ -75,8 +75,11 @@ def cost_report():
     plan_df_august = transform_planned_budget_df(
         plan_date_august, "2023-08-01", "2023-08-31"
     )
+    plan_df_september = transform_planned_budget_df(
+        plan_date_september, "2023-09-01", "2023-09-30"
+    )
     concatenated_plan_df = pd.concat(
-        [plan_df_june, plan_df_july, plan_df_august], ignore_index=True
+        [plan_df_june, plan_df_july, plan_df_august, plan_df_september], ignore_index=True
     )
 
     # Финальное объединение

@@ -52,7 +52,7 @@ class CustomReport:
         '''If the method is called without arguments, the values ​​from the attributes will be used.
 
         '''
-        if df.empty == True:
+        if df.empty:
             df = self.at_report_df
         if file_name is None:
             self.create_file_name()
