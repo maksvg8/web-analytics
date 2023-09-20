@@ -144,7 +144,7 @@ class GetDataFromAPI(UrlTree):
         
     # def 
 
-    def get_json_from_api(self, row):
+    def get_json_data_from_api(self, row):
         url = f"{self.at_site_url}/_next/data/{self.at_token}{row[PATH_COLOMN]}.json?id={row[LAST_PART_COLOMN]}"
         session = requests.Session()
         session.headers = HEADER
@@ -169,7 +169,7 @@ class GetDataFromAPI(UrlTree):
 
     def get_async_data(self, site_map_df):
         with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
-            future_to_row = {executor.submit(self.get_json_from_api, row): row for _, row in site_map_df.iterrows()}
+            future_to_row = {executor.submit(self.get_json_data_from_api, row): row for _, row in site_map_df.iterrows()}
             
             for future in concurrent.futures.as_completed(future_to_row):
                 row = future_to_row[future]
@@ -178,7 +178,7 @@ class GetDataFromAPI(UrlTree):
                     site_map_df.at[row.name, H1_COLOMN] = h1
                     site_map_df.at[row.name, URL_REDIR_COLOMN] = redir_url
                     test_h1 = self.extract_h1_from_json(json_response)
-                    print(test_h1, '+', h1)
+                    # print(test_h1, '+', h1)
                 except Exception as e:
                     print(f"An error occurred for row {row.name}: {e}")
             return site_map_df

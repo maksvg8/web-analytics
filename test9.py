@@ -1,70 +1,69 @@
 import pandas as pd
 
-data = {
-    'eventName': ['event1', 'event1', 'event1', 'event1', 'event1', 'event1', 'event1'],
-    'client_id_event': [1, 2, 3, 4, 5, 6, 7],
-    'search_term': ['apple', 'banana', 'apple', 'appleeeee', 'bike', 'car', 'dog'],
-    'hit_timestamp': [
-        '2023-08-16 10:00:00',
-        '2023-08-16 10:00:00',
-        '2023-08-16 10:00:00',
-        '2023-08-16 10:00:00',
-        '2023-08-16 10:00:00',
-        '2023-08-16 10:00:00',
-        '2023-08-16 10:00:00'
-    ]
-}
-
-df = pd.DataFrame(data)
-
-# Преобразуем столбец hit_timestamp в формат datetime
-df['hit_timestamp'] = pd.to_datetime(df['hit_timestamp'])
-
-# Отсортируем DataFrame по client_id_event и hit_timestamp
-df = df.sort_values(by=['client_id_event', 'hit_timestamp'])
-
-print(df)
-
-# Определите условия
-# mask1 = df['eventName'] == df['eventName'].shift(-1)
-# mask2 = df['client_id_event'] == df['client_id_event'].shift(-1)
-# mask3 = df['search_term'].astype(str).ge(df['search_term'].shift(-1).astype(str))
-# mask4 = df['hit_timestamp'] < df['hit_timestamp'].shift(-1)
-# mask5 = (df['hit_timestamp'].shift(-1) - df['hit_timestamp']).dt.total_seconds() / 60 < 10
-
-# Создайте условие для обновления столбца 'group'
-# df['group'] = ~(mask1 & mask2 & mask3 & mask4 & mask5)
-# df['group'] = ~(mask3)
-# Убедитесь, что последняя строка в группе устанавливается в True
-# df['group'] = df.groupby('client_id_event')['group'].transform('ffill')
-
-# Вывод обновленного DataFrame
+from googleapiclient.discovery import build
+from oauth2client.service_account import ServiceAccountCredentials
 
 
 
 
-# apply the function to each row in the DataFrame
-df['group'] = df['client_id_event']
-print(df)
 
 
 
+
+from google.oauth2 import service_account
+from googleapiclient.discovery import build, Resource
+
+
+def auth_using_key_file(key_filepath: str) -> Resource:
+    """Authenticate using a service account key file saved locally"""
+
+    credentials = service_account.Credentials.from_service_account_file(
+        key_filepath, scopes=SCOPE
+    )
+    service = build(API_SERVICE_NAME, API_VERSION, credentials=credentials)
+
+    return service
+
+# filepath location of your service account key json file
+KEY_FILE = "./service-account-key.json"
+
+# authenticate session
+service = auth_using_key_file(key_filepath=KEY_FILE)
+
+# verify your service account has permissions to your domain
+service.sites().list().execute()
+
+{'siteEntry': [{'siteUrl': 'sc-domain:engineeringfordatascience.com',
+   'permissionLevel': 'siteRestrictedUser'}]}
+
+
+
+
+
+
+
+
+import searchconsole
 import pandas as pd
-
-# Создаем пример DataFrame
-data = {
-    'A': ['aaaa', 'en', 'end'],
-    'B': ['aaaasa', 'end', 'red']
-}
-
-df = pd.DataFrame(data)
-
-# Выбираем две строки (например, первую и вторую) и столбцы A и B
-def contains_partial(a, b):
-    return a in b
-
-# Применяем функцию к DataFrame
-# Выводим результат
+import os
+ 
+# add folder where you downloaded your credentials
+creds = 'C:/Users/User/Desktop/Google_Indexing_API_github-master/json_json/client_secret_509265828765-1frs5jn33iia71q8hlt6gtq8dq3s8mmf.apps.googleusercontent.com.json'
+ 
+def authenticate(config='client_secrets.json', token='credentials.json'):
+    """Authenticate GSC"""
+    if os.path.isfile(token):
+        account = searchconsole.authenticate(client_config=config,
+                                            credentials=token)
+    else:
+        account = searchconsole.authenticate(client_config=config,
+                                        serialize=token)
+    return account
+ 
+account = authenticate(config=creds)
+site = 'https://emall.by/'
+months = -2
+webproperty = account[site]
+report = webproperty.query.range('today', months=months).dimension('page', 'query').get()
+df = report.to_dataframe()
 print(df)
-
-

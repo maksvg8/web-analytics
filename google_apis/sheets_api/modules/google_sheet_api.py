@@ -1,27 +1,43 @@
-import os
 import pandas as pd
 
-import httplib2
-from googleapiclient.discovery import build
-from oauth2client.service_account import ServiceAccountCredentials
+from google.oauth2 import service_account
+from googleapiclient.discovery import build, Resource
 
 from google_apis.cred.credentials import GOOGLE_CREDENTIALS_JSON_PATH
 
 
-def __get_service_google_sheets():
+# def __get_service_google_sheets():
+#     '''
+#     Создание учетной записи
+#     TODO: 
+#     1) Добавить проверку на наличие токена
+#     2) Переписать в методы класса
+#     '''
+#     creds_json = GOOGLE_CREDENTIALS_JSON_PATH
+#     # os.path.dirname(__file__) + "/creds/sacc1.json"
+#     scopes = 'https://www.googleapis.com/auth/spreadsheets'
+
+#     creds_service = ServiceAccountCredentials.from_json_keyfile_name(
+#         creds_json, scopes).authorize(httplib2.Http())
+#     return build('sheets', 'v4', http=creds_service)
+
+from google.oauth2 import service_account
+from googleapiclient.discovery import build, Resource
+
+def __get_service_google_sheets() -> Resource:
     '''
-    Создание учетной записи
+    Authenticate using a service account key file saved locally
     TODO: 
-    1) Добавить проверку на наличие токена
-    2) Переписать в методы класса
+    1) Переписать в методы класса
+
     '''
     creds_json = GOOGLE_CREDENTIALS_JSON_PATH
-    # os.path.dirname(__file__) + "/creds/sacc1.json"
-    scopes = 'https://www.googleapis.com/auth/spreadsheets'
-
-    creds_service = ServiceAccountCredentials.from_json_keyfile_name(
-        creds_json, scopes).authorize(httplib2.Http())
-    return build('sheets', 'v4', http=creds_service)
+    scopes = ['https://www.googleapis.com/auth/spreadsheets']
+    credentials = service_account.Credentials.from_service_account_file(
+        creds_json, scopes=scopes
+    )
+    service = build('sheets', 'v4', credentials=credentials)
+    return service
 
 
 def extract_rows_from_gooogle_sheets(sheet_id, sheet_range):

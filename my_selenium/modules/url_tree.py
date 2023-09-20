@@ -95,10 +95,12 @@ class UrlTree(CustomReport):
     def get_full_df_with_urls(self):
         default = self.create_dafault_df()
         category = self.get_df_from_sitemap( 'Category', self.at_site_url+self.at_category_sitemap)
+        category[LAST_PART_COLOMN] = category[URL_COLOMN].str.extract(r'(\d+)').fillna('')
         tags = self.get_df_from_sitemap('Tags', self.at_site_url+self.at_tags_sitemap)
-        site_map_df = pd.concat([default, category, tags], ignore_index=True)
+        default_tags_df = pd.concat([default, tags], ignore_index=True)
+        default_tags_df[LAST_PART_COLOMN] = ''
+        site_map_df = pd.concat([default_tags_df, category], ignore_index=True)
         site_map_df[PATH_COLOMN] = site_map_df[URL_COLOMN].str.replace('.*\.by', '', regex=True)
-        site_map_df[LAST_PART_COLOMN] = site_map_df[URL_COLOMN].str.extract(r'(\d+)').fillna('')
         site_map_df[URL_REDIR_COLOMN] = ''
         self.at_report_df = site_map_df
         return site_map_df
