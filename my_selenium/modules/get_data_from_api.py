@@ -184,19 +184,18 @@ class GetDataFromAPI(UrlTree):
             return site_map_df
         
 if __name__ == '__main__':
-    test = GetDataFromAPI(project_name='ED')
-    urls = test.get_full_df_with_urls()
-    test.get_token()
-    site_map_df = test.get_async_data(urls)
-    print(site_map_df)
-    test.overwriting_old_csv_report(site_map_df)
 
-    test = GetDataFromAPI(project_name='EM')
-    urls = test.get_full_df_with_urls()
-    test.get_token()
-    site_map_df = test.get_async_data(urls)
-    print(site_map_df)
-    test.overwriting_old_csv_report(site_map_df)
+    project_name_list = ['ED', 'EM']
+    for project in project_name_list:
+
+        test = GetDataFromAPI(project_name=project)
+        urls = test.get_full_df_with_urls()
+        test.get_token()
+        site_map_df = test.get_async_data(urls)
+        print(site_map_df)
+        test.overwriting_old_csv_report(site_map_df)
+
+
 
     # i=0
     # for index, row in urls.iterrows():

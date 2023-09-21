@@ -40,7 +40,7 @@ def __get_service_google_sheets() -> Resource:
     return service
 
 
-def extract_rows_from_gooogle_sheets(sheet_id, sheet_range):
+def extract_rows_from_gooogle_sheets(sheet_id, sheet_range) -> pd.DataFrame:
     """
     Может читать данные из таблицы
     Для подключения к таблице необходимо выдать доступ на почту сервисного аккаунта с правами редактора
@@ -57,11 +57,7 @@ def extract_rows_from_gooogle_sheets(sheet_id, sheet_range):
         resp = sheet.values().get(spreadsheetId=sheet_id,
                                 range=sheet_range).execute()
     except Exception as e:
-        print(type(e))
         raise ConnectionError("Проблема с подключением")
-
-        # https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/batchGet
-        # resp = sheet.values().batchGet(spreadsheetId=sheet_id, ranges=["'Для рассчетов'!A1:J3"]).execute()
     try:
         headers = resp['values'][0]
         rows = resp['values'][1:]
