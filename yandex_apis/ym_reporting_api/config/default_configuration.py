@@ -28,4 +28,4 @@ FILTER_JB_CAMPAIGN = "ym:s:<attribution>UTMCampaign=~'.*_jb_.*' AND NOT(ym:s:<at
 FILTER_ED_BANNER = "ym:pv:URLParamNameAndValue=~'ed_ban.*'"
 FILTER_EM_BANNER = "ym:pv:URLParamNameAndValue=~'em_ban.*'"
 
-FILTER_CATEGORY = "ym:pv:URLPath=~'^/categ.*' OR ym:pv:URLPath=='/'"
+FILTER_CATEGORY = "ym:pv:URLPath=~'^/categ.*' OR ym:pv:URLPath=='/' OR ym:pv:URLPath=~'^/actions.*' OR ym:pv:URLPath=~'^/actions.*' OR ym:pv:URLPath=~'^/brand.*'"

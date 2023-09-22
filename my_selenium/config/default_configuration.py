@@ -10,6 +10,10 @@ ED_TAGS_SITEMAP = '/sitemap/6QUxaY.xml'
 EM_TAGS_SITEMAP = '/sitemap/6QUxaY.xml'
 JB_TAGS_SITEMAP = ''
 
+ED_OTHER_SITEMAP = '/sitemap/other.xml'
+EM_OTHER_SITEMAP = '/sitemap/other.xml'
+JB_OTHER_SITEMAP = ''
+
 HEADER = {
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
     'accept-encoding': 'gzip, deflate, br',
@@ -23,9 +27,13 @@ HEADER = {
     'upgrade-insecure-requests': '1',
     'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36'}
 
-COLUMN = ['Site', 'Page_type', 'URL']
+
+SITE_COLOMN = 'Site'
+PAGE_TYPE_COLOMN = 'Page_type'
 H1_COLOMN = 'H1'
 URL_COLOMN = 'URL'
+STATUS_COLOMN = 'Status'
 PATH_COLOMN = 'path'
 LAST_PART_COLOMN = 'last_part'
 URL_REDIR_COLOMN = 'URL Redir'
+COLUMN = [SITE_COLOMN, PAGE_TYPE_COLOMN, URL_COLOMN]

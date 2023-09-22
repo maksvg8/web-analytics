@@ -14,8 +14,6 @@ from custom_reports.modules.class_report import CustomReport, try_ping_google
 from my_selenium.config.default_configuration import *
 
 
-
-
 class UrlTree(CustomReport):
     """ 
     Class for collecting and storing URLs for categories, products, etc.
@@ -29,26 +27,29 @@ class UrlTree(CustomReport):
         CustomReport.__init__(self, report_name, project_name, report_type)
         #
         self.at_report_df = pd.DataFrame()
-        self.set_site_url()
+        self.__set_site_url()
+        self.at_default_sitemap_df = self.__create_dafault_df()
         self.at_total_rows: int = None
 
-    def set_site_url(self):
+    def __set_site_url(self):
         if self.at_project_name == 'ED':
             self.at_site_url = ED_SITE_URL
             self.at_category_sitemap = ED_CATEGORY_SITEMAP
             self.at_tags_sitemap = ED_TAGS_SITEMAP
+            self.at_other_sitemap = ED_OTHER_SITEMAP
         elif self.at_project_name == 'EM':
             self.at_site_url = EM_SITE_URL
             self.at_category_sitemap = EM_CATEGORY_SITEMAP
             self.at_tags_sitemap = EM_TAGS_SITEMAP
+            self.at_other_sitemap = EM_OTHER_SITEMAP
         elif self.at_project_name == 'JB':
             self.at_site_url = JB_SITE_URL
             self.at_category_sitemap = JB_TAGS_SITEMAP
+            self.at_other_sitemap = JB_OTHER_SITEMAP
         else:
             raise "Invalid project name"
-        return self.at_site_url, self.at_category_sitemap
 
-    def create_dafault_df(self):
+    def __create_dafault_df(self):
         DEFAULT_ROWS = [[f'{self.at_project_name}','Home', f'{self.at_site_url}/'],
                         [f'{self.at_project_name}','Catalog', f'{self.at_site_url}/categories']]
         df = pd.DataFrame(DEFAULT_ROWS, columns=COLUMN)
@@ -92,22 +93,21 @@ class UrlTree(CustomReport):
         # print(df)
         return xml_content
     
+    @try_ping_google
     def get_full_df_with_urls(self):
-        default = self.create_dafault_df()
-        category = self.get_df_from_sitemap( 'Category', self.at_site_url+self.at_category_sitemap)
+        category = self.get_df_from_sitemap('Category', self.at_site_url+self.at_category_sitemap)
         category[LAST_PART_COLOMN] = category[URL_COLOMN].str.extract(r'(\d+)').fillna('')
         tags = self.get_df_from_sitemap('Tags', self.at_site_url+self.at_tags_sitemap)
-        default_tags_df = pd.concat([default, tags], ignore_index=True)
+        other = self.get_df_from_sitemap('Other', self.at_site_url+self.at_other_sitemap)
+        default_tags_df = pd.concat([self.at_default_sitemap_df, tags, other], ignore_index=True)
         default_tags_df[LAST_PART_COLOMN] = ''
         site_map_df = pd.concat([default_tags_df, category], ignore_index=True)
         site_map_df[PATH_COLOMN] = site_map_df[URL_COLOMN].str.replace('.*\.by', '', regex=True)
         site_map_df[URL_REDIR_COLOMN] = ''
+        site_map_df[STATUS_COLOMN] = ''
         self.at_report_df = site_map_df
         return site_map_df
             
-# TODO
-# https://pypi.org/project/ThreadPoolExecutorPlus/
-
 
 if __name__ == '__main__':
     test = UrlTree(project_name='ED')
