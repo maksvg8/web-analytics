@@ -4,7 +4,7 @@ from typing import List
 import datetime
 import functools
 
-from custom_reports.modules.class_report import CustomReport, try_ping_google
+from custom_reports.modules.class_report import CustomReport
 
 from yandex_apis.cred.credentials import (
     YM_TOKEN,
@@ -125,7 +125,6 @@ class YandexMetricReport(CustomReport):
         self.at_ym_metr = METR_CATEGORY_REPORT
         self.at_filters = FILTER_CATEGORY
 
-    @try_ping_google
     def request_ym_data(self):
         # параметры запроса
         params = {
@@ -184,6 +183,7 @@ class YandexMetricReport(CustomReport):
         self.at_report_df = df
         return df
 
+    @CustomReport.try_ping_google
     def all_ym_rows_to_df(self):
         try:
             self.request_ym_data()
@@ -205,8 +205,3 @@ class YandexMetricReport(CustomReport):
             raise e
         finally:
             return self.at_report_df
-        
-if __name__ == '__main__':
-    test = YandexMetricReport('t_test')
-    resp = test.all_ym_rows_to_df()
-    print(resp)

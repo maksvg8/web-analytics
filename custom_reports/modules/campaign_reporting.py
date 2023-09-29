@@ -9,7 +9,7 @@ from custom_reports.config.default_configuration import sourcePatterns
 def extract_cost_data_for_last_date(cost_data):
     cost_data['Day'] = pd.to_datetime(cost_data['Day'])
     start_date = cost_data['Day'].min()
-    end_date = cost_data['Day'].min() + datetime.timedelta(days=7)
+    end_date = cost_data['Day'].min() + datetime.timedelta(days=14)
     last_cost_data = cost_data[(cost_data['Day'] >= start_date)&(cost_data['Day'] <= end_date)].copy()
     last_cost_data["Day"] = last_cost_data["Day"].astype(str)
     last_cost_data = last_cost_data.reset_index(drop=True)

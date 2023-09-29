@@ -8,25 +8,6 @@ from typing import List
 from credentials import DATA_DIRECTORY
 
 
-def try_ping_google(method):
-    @functools.wraps(method)
-    def wrapper(self, *args, **kwargs):
-        i = 60
-        while i >= 1:
-            try:
-                url = "https://google.com"
-                response = requests.get(url)
-            except:
-                time.sleep(i)
-                if i > 360:
-                    raise Exception
-                i += 60
-            break
-        ret = method(self, *args, **kwargs)
-        return ret
-    return wrapper
-
-
 class CustomReport:
     def __init__(self,
                 report_name: str,
@@ -69,3 +50,23 @@ class CustomReport:
             df.to_csv(file_path, index=False)
         print("Report exported to csv")
         return df
+
+
+    @staticmethod
+    def try_ping_google(method):
+        @functools.wraps(method)
+        def wrapper(self, *args, **kwargs):
+            i = 60
+            while i >= 1:
+                try:
+                    url = "https://google.com"
+                    response = requests.get(url)
+                except:
+                    time.sleep(i)
+                    if i > 360:
+                        raise Exception
+                    i += 60
+                break
+            ret = method(self, *args, **kwargs)
+            return ret
+        return wrapper

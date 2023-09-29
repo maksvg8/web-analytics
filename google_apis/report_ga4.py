@@ -6,7 +6,7 @@ from google_apis.data_api.config.default_configuration import (ga4_dim_banners, 
                     ga4_dim_List, ga4_metr_List, ga4_dim_transaction_email,
                     ga4_metr_transaction_email, ga4_dim_sessionManualTerm,
                     ga4_metr_sessionManualTerm,ga4_dim_search_term,ga4_metr_search_term,ga4_dim_custom,ga4_metr_custom)
-from search_term import aggregate_search_terms
+
 
 report = ga4.GA4Report("search_term_aug", "ED")
 # report = ga4.GA4Report("ga4_mail_aug", "EM")
@@ -27,11 +27,10 @@ report.at_ga4_metr_list = ga4_metr_search_term
 report.at_offset = 0
 report.at_limit = 100000
 
+report.set_filter("search_term")
 df = report.ga4_all_rows_to_df()
+print(df)
 report.overwriting_old_csv_report()
-
-# df = df.reset_index(drop=True)
-# aggregate_search_terms(df, report.at_report_name)
 
 
 

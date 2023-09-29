@@ -11,7 +11,7 @@ from google.analytics.data_v1beta.types import (DateRange, Dimension, Filter,
                                                 MetricType,
                                                 FilterExpressionList)
 
-from custom_reports.modules.class_report import try_ping_google, CustomReport
+from custom_reports.modules.class_report import CustomReport
 
 from google_apis.cred.credentials import (GA4_ED_PROPERTY_ID, GA4_EM_PROPERTY_ID,
                                           GOOGLE_CREDENTIALS_JSON_PATH)
@@ -37,6 +37,7 @@ class GA4Report(CustomReport):
         #
         self.at_limit: int = 100000
         self.at_offset: int = 0
+        self.at_filter: str = None
         self.at_ga4_response = None
         self.at_all_respons_rows: int = None
         self.at_taken_rows_count: int = None
@@ -52,7 +53,22 @@ class GA4Report(CustomReport):
         elif self.at_project_name == "EM":
             self.at_property_id: str = GA4_EM_PROPERTY_ID
         else:
-            raise "Invalid project name"
+            raise ValueError("Invalid project name")
+        
+    def set_filter(self, filter_name: str):
+        """Доступно 3 фильтра:\n
+        'card'\n
+        'search_term'\n
+        'email'\n
+        """
+        if filter_name == 'card':
+            self.at_filter = self.card_dim_filter()
+        elif filter_name == 'search_term':
+            self.at_filter = self.search_dim_filter()
+        elif filter_name == 'email':
+            self.at_filter = self.email_dim_filter()
+        else:
+            raise ValueError('Invalid filter name')
 
     def collect_quota(method):
         @functools.wraps(method)
@@ -119,6 +135,7 @@ class GA4Report(CustomReport):
         ]))
         return filter
 
+
     @collect_quota
     def ga4_run_metadata_report_to_df(self):
         """Runs a metadata report on a Google Analytics 4 property"""
@@ -152,8 +169,8 @@ class GA4Report(CustomReport):
             return df
         except IOError as e:
             raise GA4Exception(e)
+        
 
-    @try_ping_google
     @collect_quota
     def ga4_run_report_request(self,
                                limit_int: int = None,
@@ -188,7 +205,7 @@ class GA4Report(CustomReport):
                 date_ranges=[
                     DateRange(start_date=start_date_str, end_date=end_date_str)
                 ],
-                dimension_filter=self.search_dim_filter(),
+                dimension_filter=self.at_filter,
                 limit=limit_int,
                 offset=offset_int,
                 return_property_quota=True)
@@ -300,6 +317,7 @@ class GA4Report(CustomReport):
                                             index=False)
         print("successful add quota information to excel")
 
+    @CustomReport.try_ping_google
     def ga4_all_rows_to_df(self):
         self.ga4_run_report_request()
         while self.at_taken_rows_count + self.at_offset < self.at_all_respons_rows:
@@ -314,3 +332,6 @@ class GA4Report(CustomReport):
             self.ga4_run_report_request()
             self.at_report_df = pd.concat([report_df, self.at_report_df])
         return self.at_report_df
+
+
+# if __name__ == '__main__':

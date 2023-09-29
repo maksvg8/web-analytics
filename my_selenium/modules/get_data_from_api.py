@@ -12,7 +12,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import xml.etree.ElementTree as ET
-from custom_reports.modules.class_report import try_ping_google
 from my_selenium.config.default_configuration import *
 from my_selenium.modules.url_tree import *
 
@@ -25,7 +24,7 @@ class GetDataFromAPI(UrlTree):
     """
 
     def __init__(
-        self, report_name: str = 'test', project_name: str = 'ED', report_type: str = "default"
+        self, report_name: str = 'default', project_name: str = 'ED', report_type: str = "default"
     ):
         CustomReport.__init__(self, report_name, project_name, report_type)
         UrlTree.__init__(self, report_name, project_name, report_type)
@@ -58,10 +57,10 @@ class GetDataFromAPI(UrlTree):
             return ""
         
 
-    def set_h1_to_default_df(self):
-        self.at_default_sitemap_df.loc[self.at_default_sitemap_df[self.at_default_sitemap_df[PAGE_TYPE_COLOMN = ]], H1_COLOMN] = 7
+    # def set_h1_to_default_df(self):
+    #     self.at_default_sitemap_df.loc[self.at_default_sitemap_df[self.at_default_sitemap_df[PAGE_TYPE_COLOMN =]], H1_COLOMN] = 7
 
-        return
+    #     return
 
 
     def get_json_data_from_api(self, row):
@@ -105,23 +104,9 @@ class GetDataFromAPI(UrlTree):
 if __name__ == '__main__':
     project_name_list = ['ED', 'EM']
     for project in project_name_list:
-
         test = GetDataFromAPI(project_name=project)
         urls = test.get_full_df_with_urls()
         test.get_token()
         site_map_df = test.get_async_data(urls)
+        site_map_df.loc[0:1, H1_COLOMN] = ['Главная', 'Каталог']
         print(site_map_df)
-        test.overwriting_old_csv_report(site_map_df)
-
-
-
-    # i=0
-    # for index, row in urls.iterrows():
-    #     json_response = test.get_json_data(row)
-    #     h1 = test.extract_h1(json_response)
-    #     # Выводим информацию о текущей строке и результате запроса
-    #     print(i)
-    #     print(h1)
-    #     i+=1
-
-from yandex_apis.ym_reporting_api.modules import ym_reporting_api as ym

@@ -10,7 +10,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import xml.etree.ElementTree as ET
-from custom_reports.modules.class_report import CustomReport, try_ping_google
+from custom_reports.modules.class_report import CustomReport
 from my_selenium.config.default_configuration import *
 
 
@@ -93,15 +93,15 @@ class UrlTree(CustomReport):
         # print(df)
         return xml_content
     
-    @try_ping_google
+    @CustomReport.try_ping_google
     def get_full_df_with_urls(self):
         category = self.get_df_from_sitemap('Category', self.at_site_url+self.at_category_sitemap)
         category[LAST_PART_COLOMN] = category[URL_COLOMN].str.extract(r'(\d+)').fillna('')
         tags = self.get_df_from_sitemap('Tags', self.at_site_url+self.at_tags_sitemap)
         other = self.get_df_from_sitemap('Other', self.at_site_url+self.at_other_sitemap)
-        default_tags_df = pd.concat([self.at_default_sitemap_df, tags, other], ignore_index=True)
-        default_tags_df[LAST_PART_COLOMN] = ''
-        site_map_df = pd.concat([default_tags_df, category], ignore_index=True)
+        tamp_df = pd.concat([self.at_default_sitemap_df, tags, other], ignore_index=True)
+        tamp_df[LAST_PART_COLOMN] = ''
+        site_map_df = pd.concat([tamp_df, category], ignore_index=True)
         site_map_df[PATH_COLOMN] = site_map_df[URL_COLOMN].str.replace('.*\.by', '', regex=True)
         site_map_df[URL_REDIR_COLOMN] = ''
         site_map_df[STATUS_COLOMN] = ''
