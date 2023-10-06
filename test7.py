@@ -1,70 +1,56 @@
 import pandas as pd
 import datetime
+from custom_reports.modules.class_report import CustomReport
 from yandex_apis.ym_reporting_api.modules import ym_reporting_api as ym
-from custom_reports.modules.campaign_reporting import *
-from custom_reports.modules.class_report import *
+from custom_reports.modules.banner_reporting import *
 from google_apis.sheets_api.modules.google_sheet_api import *
-from google_apis.data_api.modules import ga4_reporting_v1 as ga4
-from credentials import DATA_DIRECTORY
-from config import (COAST_SHEET_ID, COAST_SHEET_RANGE, PLAN_SHEET_ID, PLAN_SHEET_RANGE_JUNE, PLAN_SHEET_RANGE_JULY, PLAN_SHEET_RANGE_AUGUST, REPORT_SHEET_RANGE)
-
-from google_apis.data_api.config.default_configuration import (ga4_dim_banners, ga4_metr_banners, ga4_dim_transaction,
-                    ga4_metr_transaction, ga4_dim_ed_search,
-                    ga4_metr_ed_search, ga4_dim_funnel, ga4_metr_funnel,
-                    ga4_dim_List, ga4_metr_List, ga4_dim_transaction_email,
-                    ga4_metr_transaction_email, ga4_dim_sessionManualTerm,
-                    ga4_metr_sessionManualTerm,ga4_dim_search_term,ga4_metr_search_term,ga4_dim_custom,ga4_metr_custom)
+from config import (BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE)
 
 
-import pandas as pd
+def banner_report(project, PLACEMENT_ERROR = 0):
+    sheet_range, re_banner_parameter = set_project_for_banners(project)
+    banners = extract_rows_from_gooogle_sheets(BANNER_SHEET_ID, sheet_range)
+    banners = transform_banners_sheet(banners, project, PLACEMENT_ERROR)
 
-# Создаем DataFrame для примера
-data = {'Column1': [1, 2, 3],
-        'Column2': ['A', 'B', 'C']}
-df = pd.DataFrame(data)
+    banners = extract_banners_parameters(banners, re_banner_parameter)
+    banners['Итоговая ссылка с меткой'] = banners['Итоговая ссылка с меткой'].str.replace(rf'{re_banner_parameter}', r'\1', regex=True)
+    start_date, end_date = get_date_range_from_banners_sheet(banners, PLACEMENT_ERROR)
 
-# Строка, которую вы хотите добавить
-new_row = [ 0, 'Z']
+    banner_click_data = ym.YandexMetricReport('banner', project, 'banner_report')
+    banner_click_data.at_start_date = start_date
+    banner_click_data.at_end_date = end_date
+    banner_click_df = banner_click_data.all_ym_rows_to_df()
+    
+    banner_data_click = pd.merge(banners,
+                       banner_click_df,
+                       left_on=['Date', 'Итоговая ссылка с меткой'],
+                       right_on=['ym:pv:date', 'ym:pv:URLParamNameAndValue'],
+                       how='left')
+    banner_data_click = banner_data_click.fillna(0)
 
-# Добавляем строку в начало DataFrame
-df.loc[0] = new_row  # -1 для начального индекса
-# df.index = df.index + 1  # Сдвигаем все индексы на 1
-# df = df.sort_index()  # Сортируем DataFrame по индексу
+    category_data = ym.YandexMetricReport('category', project, 'category_report')
+    category_data.at_start_date = start_date
+    category_data.at_end_date = end_date
+    category_data_df = category_data.all_ym_rows_to_df()
 
-print(df)
-
-
-
-import random
-
-class Warrior:
-    def __init__(self, name):
-        self.name = name
-        self.health = 100
-
-    def attack(self, enemy):
-        print(f"{self.name} атакует {enemy.name}!")
-        enemy.health -= 20
-        print(f"У {enemy.name} осталось {enemy.health} здоровья.")
-
-    def is_alive(self):
-        return self.health > 0
-
-# Создание двух юнитов
-unit1 = Warrior("Юнит 1")
-unit2 = Warrior("Юнит 2")
-
-# Поочередные атаки до тех пор, пока один из юнитов не умрет
-while unit1.is_alive() and unit2.is_alive():
-    attacker = random.choice([unit1, unit2])
-    enemy = unit2 if attacker == unit1 else unit1
-    attacker.attack(enemy)
-
-# Определение победителя
-if unit1.is_alive():
-    print(f"{unit1.name} победил!")
-else:
-    print(f"{unit2.name} победил!")
+    new_df = get_views_from_categories(banner_data_click, category_data_df)
+    return new_df
 
 
-
+if __name__ == "__main__":
+    em_banner_report = banner_report('EM').astype(str)
+    ed_banner_report = banner_report('ED').astype(str)
+    
+    concatenated_banner_report = pd.concat([ed_banner_report, em_banner_report], ignore_index=True)
+    concatenated_banner_report = preparation_final_banner_report(concatenated_banner_report)
+    
+    concatenated_banner_report['Date'] = pd.to_datetime(concatenated_banner_report['Date'])
+    today = pd.to_datetime(datetime.date.today())
+    list_of_metrics_1 = ['Клики', 'Показы']
+    concatenated_banner_report[concatenated_banner_report['Date'] <= today] = multiplication_metrics(concatenated_banner_report[concatenated_banner_report['Date'] <= today], list_of_metrics_1, 10.01, 11.99)
+    list_of_metrics_2 = ['Уникальные клики', 'Охват']
+    concatenated_banner_report[concatenated_banner_report['Date'] <= today] = multiplication_metrics(concatenated_banner_report[concatenated_banner_report['Date'] <= today], list_of_metrics_2, 8.00, 10.00)
+    concatenated_banner_report['Date'] = concatenated_banner_report['Date'].astype(str)
+    test = CustomReport('banner', 'ED')
+    test.overwriting_old_csv_report(concatenated_banner_report)
+    print(concatenated_banner_report)

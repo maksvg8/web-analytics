@@ -32,6 +32,7 @@ PLAN_SHEET_RANGE_JUNE = "'Для выгрузки Июнь'!A1:G"
 PLAN_SHEET_RANGE_JULY = "'Для выгрузки Июль'!A1:G"
 PLAN_SHEET_RANGE_AUGUST = "'Для выгрузки Август'!A1:G"
 PLAN_SHEET_RANGE_SEPTEMBER = "'Для выгрузки Сентябрь'!A1:G"
+PLAN_SHEET_RANGE_OCTOBER = "'Для выгрузки Октябрь'!A1:G"
 
 FACT_SHEET_ID = "19ILZ3UQggDNJveiDoOy9ZRjLU6OM1TFlUiEilHCtbbM"
 
@@ -40,8 +41,8 @@ KUFAR_SHEET_RANGE = "'Kufar auto report'!A1:L"
 
 
 BANNER_SHEET_ID = "1LWKyoobAxqN5vtD-lICJvslmA1L9nO3syhm6gSzdr3s"
-BANNER_SHEET_ED_RANGE = "'NEW ED'!A1:H"
-BANNER_SHEET_EM_RANGE = "'NEW EM'!A1:H"
+BANNER_SHEET_ED_RANGE = "'NEW ED'!A1:L"
+BANNER_SHEET_EM_RANGE = "'NEW EM'!A1:L"
 BANNER_REPORT_SHEET_RANGE = "'Для отчетов'!A1:P"
 
 PAGE_VIEWS_SHEET_ID = "1tz061j_CvCzn3OKtBXN66ZBOGf3B5f4wrqxULq7YGSs"

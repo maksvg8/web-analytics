@@ -19,7 +19,7 @@ def page_views(project: str, start_date: [str], end_date: str) -> pd.DataFrame:
     api_ed_em = GetDataFromAPI(project_name=project)
     urls = api_ed_em.get_full_df_with_urls()
     api_ed_em.get_token()
-    site_map_df = api_ed_em.get_async_data(urls)
+    site_map_df = api_ed_em.get_tread_data(urls)
     site_map_df.loc[0:1, H1_COLOMN] = ['Главная', 'Каталог']
     category_data = ym.YandexMetricReport('category', project, 'category_report')
     category_data.at_start_date = start_date

@@ -56,6 +56,10 @@ class UrlTree(CustomReport):
         return df
 
     def get_df_from_sitemap(self, page_type, sitemap):
+        '''
+        Returns a DF with the URl from Sitemap.xml
+
+        '''
         url = sitemap
         session = requests.Session()
         session.headers = HEADER
@@ -73,6 +77,10 @@ class UrlTree(CustomReport):
             raise("Response code is not 200")
 
     def selen_get_urls_from_sitemap(self):
+        '''
+        Test method
+        
+        '''
         chrome_options = Options()
         chrome_options.add_argument("--disable-extensions")
         driver = webdriver.Chrome(options=chrome_options)
@@ -95,6 +103,10 @@ class UrlTree(CustomReport):
     
     @CustomReport.try_ping_google
     def get_full_df_with_urls(self):
+        '''
+        The method allows you to create a DF with all URLs from the project (ED|EM) sitemap.xml
+        
+        '''
         category = self.get_df_from_sitemap('Category', self.at_site_url+self.at_category_sitemap)
         category[LAST_PART_COLOMN] = category[URL_COLOMN].str.extract(r'(\d+)').fillna('')
         tags = self.get_df_from_sitemap('Tags', self.at_site_url+self.at_tags_sitemap)

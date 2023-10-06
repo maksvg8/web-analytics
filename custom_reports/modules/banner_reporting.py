@@ -23,10 +23,21 @@ def extract_banners_parameters(df, re_banner_parameter):
     return df
 
 
+def transform_date_columns(df, column_a, column_b):
+    # Выбираем строки, где столбец A не является пустым
+    mask = df[column_a].notna()
+    
+    # Присваиваем значения из столбца A столбцу B для соответствующих строк
+    df.loc[mask, column_b] = df.loc[mask, column_a]
+    
+    return df
+    return
+
+
 def transform_banners_sheet(df, project, PLACEMENT_ERROR = 0):
     '''
-    Преобразует таблицу с отчетность по размещению баннеров в удобную для объединения с данными метрики.
-    Использует коэфициент ошибки, если установить 1, будет отнимать 1 день от нрачала размещения и добавлять 1 день к концу размещения, по умолчаю 0.
+    Преобразует таблицу с отчетностью по размещению баннеров в удобную для объединения с данными метрики.
+    Использует коэфициент ошибки, если установить 1, будет отнимать 1 день от нрачала размещения и добавлять 1 день к концу размещения
     
     '''
     df['Проект'] = project
@@ -62,8 +73,13 @@ def get_date_range_from_banners_sheet(df, PLACEMENT_ERROR = 0):
     
     '''
     start_date = (df['Дата начала размещения'].min() - datetime.timedelta(days=PLACEMENT_ERROR)).strftime('%Y-%m-%d')
-    end_date = (df['Дата окончания размещения'].max() + datetime.timedelta(days=PLACEMENT_ERROR)).strftime('%Y-%m-%d')
-    ...
+    end_date = (df['Дата окончания размещения'].max() + datetime.timedelta(days=PLACEMENT_ERROR))
+    today = pd.Timestamp.today()
+    if end_date >= today:
+        end_date = today.strftime('%Y-%m-%d')
+    else:
+        end_date = end_date.strftime('%Y-%m-%d')
+        ...
     return start_date, end_date
 
 

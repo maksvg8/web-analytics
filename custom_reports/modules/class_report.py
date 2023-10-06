@@ -9,6 +9,10 @@ from credentials import DATA_DIRECTORY
 
 
 class CustomReport:
+    '''
+    Parenting class for all reports
+
+    '''
     def __init__(self,
                 report_name: str,
                 project_name: str = "ED",
@@ -25,12 +29,19 @@ class CustomReport:
 
 
     def create_file_name(self):
+        '''
+        This method returns the file name that was generated for the report when it was exported.
+        It uses the "at_project_name"_"at_report_type"_"at_report_name" construct
+
+        '''
         self.at_file_name = f"{self.at_project_name}_{self.at_report_type}_{self.at_report_name}"
         return self.at_file_name
 
     
     def overwriting_old_csv_report(self, df=pd.DataFrame(), file_name: str = None, drop_duplicates: bool = False, duplicates: List[str] = None):
-        '''If the method is called without arguments, the values ​​from the attributes will be used.
+        '''
+        The method allows to upload report to CSV, the directory is taken from configuration. It can create a file name based on class constructor attributes.
+        If the file with this name already exists, it will perform concatenation, after that it can remove duplicates by fields from the list.
 
         '''
         if df.empty:

@@ -17,14 +17,14 @@ from my_selenium.modules.url_tree import *
 
 
 class GetDataFromAPI(UrlTree):
-    """ 
+    ''' 
     Class for collecting and storing data for categories, products, etc. from ED_EM API
 
 
-    """
+    '''
 
     def __init__(
-        self, report_name: str = 'default', project_name: str = 'ED', report_type: str = "default"
+        self, report_name: str = 'default', project_name: str = 'ED', report_type: str = 'default'
     ):
         CustomReport.__init__(self, report_name, project_name, report_type)
         UrlTree.__init__(self, report_name, project_name, report_type)
@@ -34,6 +34,10 @@ class GetDataFromAPI(UrlTree):
 
 
     def get_token(self):
+        '''
+        Obtain the token needed to extract data from the site's json response
+        
+        '''
         url = self.at_site_url+'/'
         response = requests.get(url, headers=HEADER)
         if response.status_code == 200:
@@ -42,29 +46,27 @@ class GetDataFromAPI(UrlTree):
             match = re.search(r'<script src="/_next/static/([^/]+)/_buildManifest.js" defer="">', html_content)
             if match:
                 self.at_token = match.group(1)
-                print("Найденное значение:", self.at_token)
+                print('Найденное значение:', self.at_token)
             else:
-                raise("Значение не найдено")
+                raise('Значение не найдено')
         else:
-            raise("Ошибка при получении страницы")
+            raise('Ошибка при получении страницы')
 
 
     def extract_h1_from_json(self, response):
         try:
-            h1_value = response.get("pageProps", {}).get("page", {}).get("seo", {}).get("h1", "")
+            h1_value = response.get('pageProps', {}).get('page', {}).get('seo', {}).get('h1', '')
             return h1_value
         except:
-            return ""
-        
-
-    # def set_h1_to_default_df(self):
-    #     self.at_default_sitemap_df.loc[self.at_default_sitemap_df[self.at_default_sitemap_df[PAGE_TYPE_COLOMN =]], H1_COLOMN] = 7
-
-    #     return
+            return ''
 
 
     def get_json_data_from_api(self, row):
-        url = f"{self.at_site_url}/_next/data/{self.at_token}{row[PATH_COLOMN]}.json?id={row[LAST_PART_COLOMN]}"
+        '''
+        This method allows you to get data from the json response json of the site, such as h1 and the status of the response
+        
+        '''
+        url = f'{self.at_site_url}/_next/data/{self.at_token}{row[PATH_COLOMN]}.json?id={row[LAST_PART_COLOMN]}'
         session = requests.Session()
         session.headers = HEADER
         response = session.get(url)
@@ -80,13 +82,17 @@ class GetDataFromAPI(UrlTree):
                 return '', 'error Invalid JSON response', '', response.url
         else:
             error_info = {
-                "status_code": response.status_code
+                'status_code': response.status_code
             }
-            print(f"error {error_info}")
+            print(f'error {error_info}')
             return '', f'error Invalid status cod {response.status_code}', '', response.url
 
 
-    def get_async_data(self, site_map_df):
+    def get_tread_data(self, site_map_df):
+        '''
+        Allows you to retrieve page data in multiple threads
+        
+        '''
         with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
             future_to_row = {executor.submit(self.get_json_data_from_api, row): row for _, row in site_map_df.iterrows()}
             for future in concurrent.futures.as_completed(future_to_row):
@@ -97,7 +103,7 @@ class GetDataFromAPI(UrlTree):
                     site_map_df.at[row.name, STATUS_COLOMN] = status
                     site_map_df.at[row.name, URL_REDIR_COLOMN] = redir_url
                 except Exception as e:
-                    print(f"An error occurred for row {row.name}: {e}")
+                    print(f'An error occurred for row {row.name}: {e}')
             return site_map_df
         
 
@@ -107,6 +113,6 @@ if __name__ == '__main__':
         test = GetDataFromAPI(project_name=project)
         urls = test.get_full_df_with_urls()
         test.get_token()
-        site_map_df = test.get_async_data(urls)
+        site_map_df = test.get_tread_data(urls)
         site_map_df.loc[0:1, H1_COLOMN] = ['Главная', 'Каталог']
         print(site_map_df)
