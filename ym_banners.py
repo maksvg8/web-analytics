@@ -1,5 +1,6 @@
 import pandas as pd
 import datetime
+from custom_reports.modules.class_report import CustomReport
 from yandex_apis.ym_reporting_api.modules import ym_reporting_api as ym
 from custom_reports.modules.banner_reporting import *
 from google_apis.sheets_api.modules.google_sheet_api import *
@@ -9,10 +10,17 @@ from config import (BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE)
 def banner_report(project, PLACEMENT_ERROR = 0):
     sheet_range, re_banner_parameter = set_project_for_banners(project)
     banners = extract_rows_from_gooogle_sheets(BANNER_SHEET_ID, sheet_range)
+
+    banners = transform_plan_date_columns(banners, 'Дата старта в отчет', 'Дата начала размещения')
+    banners = transform_plan_date_columns(banners, 'Дата окончания в отчет', 'Дата окончания размещения')
+    banners = transform_fact_date_columns(banners, 'Дата начала размещения', 'Реальная дата СТАРТА размещения')
+    banners = transform_fact_date_columns(banners, 'Дата окончания размещения', 'Реальная дата КОНЦА размещения')
+
+    banners['Где размещается'] = banners['Где размещается (или ID категории)']
+
     banners = transform_banners_sheet(banners, project, PLACEMENT_ERROR)
 
     banners = extract_banners_parameters(banners, re_banner_parameter)
-    banners['Итоговая ссылка с меткой'] = banners['Итоговая ссылка с меткой'].str.replace(rf'{re_banner_parameter}', r'\1', regex=True)
     start_date, end_date = get_date_range_from_banners_sheet(banners, PLACEMENT_ERROR)
 
     banner_click_data = ym.YandexMetricReport('banner', project, 'banner_report')
@@ -49,7 +57,8 @@ if __name__ == "__main__":
     list_of_metrics_2 = ['Уникальные клики', 'Охват']
     concatenated_banner_report[concatenated_banner_report['Date'] <= today] = multiplication_metrics(concatenated_banner_report[concatenated_banner_report['Date'] <= today], list_of_metrics_2, 8.00, 10.00)
     concatenated_banner_report['Date'] = concatenated_banner_report['Date'].astype(str)
-
+    # test = CustomReport('test', 'ED')
+    # test.overwriting_old_csv_report(concatenated_banner_report, 'banner_banner_test')
     final_df = concatenated_banner_report.fillna('')
     del_data = clear_old_gooogle_sheet(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE)
     set_data = add_df_to_gooogle_sheets(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE, final_df)

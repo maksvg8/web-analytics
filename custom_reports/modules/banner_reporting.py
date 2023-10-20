@@ -23,15 +23,17 @@ def extract_banners_parameters(df, re_banner_parameter):
     return df
 
 
-def transform_date_columns(df, column_a, column_b):
-    # Выбираем строки, где столбец A не является пустым
-    mask = df[column_a].notna()
-    
-    # Присваиваем значения из столбца A столбцу B для соответствующих строк
-    df.loc[mask, column_b] = df.loc[mask, column_a]
-    
+
+def transform_plan_date_columns(df, column_a, column_b):
+    mask = df[column_a].notnull()
+    df.loc[mask, column_b] = df[column_a]
     return df
-    return
+
+
+def transform_fact_date_columns(df, column_a, column_b):
+    mask = df[column_b].isnull()
+    df.loc[mask, column_b] = df[column_a]
+    return df
 
 
 def transform_banners_sheet(df, project, PLACEMENT_ERROR = 0):
@@ -42,8 +44,8 @@ def transform_banners_sheet(df, project, PLACEMENT_ERROR = 0):
     '''
     df['Проект'] = project
     df = df.drop(df[df['Итоговая ссылка с меткой'] == "Ошибка: Есть незаполненное поле"].index)
-    df['Дата начала размещения'] = pd.to_datetime(df['Дата начала размещения'], format="%d.%m.%Y") - datetime.timedelta(days=PLACEMENT_ERROR)
-    df['Дата окончания размещения'] = pd.to_datetime(df['Дата окончания размещения'], format="%d.%m.%Y") + datetime.timedelta(days=PLACEMENT_ERROR)
+    df['Реальная дата СТАРТА размещения'] = pd.to_datetime(df['Реальная дата СТАРТА размещения'], format="%d.%m.%Y") - datetime.timedelta(days=PLACEMENT_ERROR)
+    df['Реальная дата КОНЦА размещения'] = pd.to_datetime(df['Реальная дата КОНЦА размещения'], format="%d.%m.%Y") + datetime.timedelta(days=PLACEMENT_ERROR)
     new_banners_sheet = []
     for _, row in df.iterrows():
         str_categ = row['Где размещается (или ID категории)']
@@ -55,7 +57,7 @@ def transform_banners_sheet(df, project, PLACEMENT_ERROR = 0):
             str_categ = str_categ.replace('_', '|')
             str_categ = rf'.*({str_categ}).*'
         row['Где размещается (или ID категории)'] = str_categ
-        dates = pd.date_range(start=row['Дата начала размещения'], end=row['Дата окончания размещения'], freq='D')
+        dates = pd.date_range(start=row['Реальная дата СТАРТА размещения'], end=row['Реальная дата КОНЦА размещения'], freq='D')
         for date in dates:
             newRow = row.copy()
             newRow['Date'] = date
@@ -72,8 +74,8 @@ def get_date_range_from_banners_sheet(df, PLACEMENT_ERROR = 0):
     Использует коэфициент ошибки, если установить 1, будет отнимать 1 день от нрачала размещения и добавлять 1 день к концу размещения, по умолчаю 0.
     
     '''
-    start_date = (df['Дата начала размещения'].min() - datetime.timedelta(days=PLACEMENT_ERROR)).strftime('%Y-%m-%d')
-    end_date = (df['Дата окончания размещения'].max() + datetime.timedelta(days=PLACEMENT_ERROR))
+    start_date = (df['Реальная дата СТАРТА размещения'].min() - datetime.timedelta(days=PLACEMENT_ERROR)).strftime('%Y-%m-%d')
+    end_date = (df['Реальная дата КОНЦА размещения'].max() + datetime.timedelta(days=PLACEMENT_ERROR))
     today = pd.Timestamp.today()
     if end_date >= today:
         end_date = today.strftime('%Y-%m-%d')
@@ -104,9 +106,12 @@ def get_views_from_categories(banners_df, category_data_df):
 
 
 def preparation_final_banner_report(banner_report_df):
-    banner_report_df = banner_report_df.drop(['Где размещается (или ID категории)', 'ym:pv:date', 'ym:pv:URLParamNameAndValue'], axis=1)
+    banner_report_df = banner_report_df.drop(['Где размещается (или ID категории)', 'ym:pv:date', 'ym:pv:URLParamNameAndValue', 'Дата старта в отчет', 'Дата окончания в отчет', 'Реальная дата СТАРТА размещения', 'Реальная дата КОНЦА размещения'], axis=1)
     new_columns = {'ym:pv:pageviews': 'Клики','ym:pv:users': 'Уникальные клики','pageviews': 'Показы','users': 'Охват'}
     banner_report_df = banner_report_df.rename(columns=new_columns)
+    banner_report_df['Дата начала размещения'] = pd.to_datetime(banner_report_df['Дата начала размещения'], format="%d.%m.%Y")
+    banner_report_df['Дата окончания размещения'] = pd.to_datetime(banner_report_df['Дата окончания размещения'], format="%d.%m.%Y")
+    banner_report_df[['Дата начала размещения','Дата окончания размещения']] = banner_report_df[['Дата начала размещения','Дата окончания размещения']].astype(str)
     ...
     return banner_report_df
 

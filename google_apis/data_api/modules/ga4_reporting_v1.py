@@ -24,6 +24,8 @@ class GA4Exception(Exception):
 
 class GA4Report(CustomReport):
     """
+    
+
     """
 
     def __init__(self,
@@ -335,3 +337,5 @@ class GA4Report(CustomReport):
 
 
 # if __name__ == '__main__':
+#     test = GA4Report('test')
+#     test.ga4_run_report_request()

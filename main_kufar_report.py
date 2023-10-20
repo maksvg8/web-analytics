@@ -15,7 +15,6 @@ else:
     start_date = '2023-07-03'
     end_date = '2023-07-23'
 
-
 report_em_kufar = ym.YandexMetricReport('ym_kufar', 'EM', 'kufar_report')
 report_em_kufar.at_start_date = start_date
 report_em_kufar.at_end_date = end_date
@@ -24,6 +23,7 @@ data_em.columns = [
     'Дата', 'UTMSource', 'UTMCampaign', 'UTMMedium', 'UTMContent', 'UTMTerm', 'ID_Покупки',
     'Визиты','Пользователи', 'Покупки', 'Доход', 'Регистрации'
 ]
+# report_em_kufar.overwriting_old_csv_report(data_em, 'test_test_test')
 final_df = data_em.fillna('')
 del_data = clear_old_gooogle_sheet(KUFAR_SHEET_ID, KUFAR_SHEET_RANGE)
 set_data = add_df_to_gooogle_sheets(KUFAR_SHEET_ID, KUFAR_SHEET_RANGE, final_df)
