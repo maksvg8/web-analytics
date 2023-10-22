@@ -61,5 +61,5 @@ if __name__ == "__main__":
     # test = CustomReport('test', 'ED')
     # test.overwriting_old_csv_report(concatenated_banner_report, 'banner_banner_test')
     final_df = concatenated_banner_report.fillna('')
-    # del_data = clear_old_gooogle_sheet(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE)
-    # set_data = add_df_to_gooogle_sheets(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE, final_df)
+    del_data = clear_old_gooogle_sheet(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE)
+    set_data = add_df_to_gooogle_sheets(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE, final_df)
