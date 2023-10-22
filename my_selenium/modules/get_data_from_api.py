@@ -16,7 +16,7 @@ from my_selenium.config.default_configuration import *
 from my_selenium.modules.url_tree import *
 
 
-class GetDataFromAPI(UrlTree):
+class DataFromEDAPI(UrlTree):
     ''' 
     Class for collecting and storing data for categories, products, etc. from ED_EM API
 
@@ -26,11 +26,11 @@ class GetDataFromAPI(UrlTree):
     def __init__(
         self, report_name: str = 'default', project_name: str = 'ED', report_type: str = 'default'
     ):
-        CustomReport.__init__(self, report_name, project_name, report_type)
-        UrlTree.__init__(self, report_name, project_name, report_type)
+        super().__init__(report_name, project_name, report_type)
         #
         self.at_report_df = pd.DataFrame()
         self.at_total_rows: int = None
+
 
 
     def get_token(self):
@@ -110,9 +110,12 @@ class GetDataFromAPI(UrlTree):
 if __name__ == '__main__':
     project_name_list = ['ED', 'EM']
     for project in project_name_list:
-        test = GetDataFromAPI(project_name=project)
+        test = DataFromEDAPI(project_name=project)
         urls = test.get_full_df_with_urls()
         test.get_token()
         site_map_df = test.get_tread_data(urls)
         site_map_df.loc[0:1, H1_COLOMN] = ['Главная', 'Каталог']
-        print(site_map_df)
+        mask = site_map_df[URL_REDIR_COLOMN].str.contains(test.at_site_url)
+
+        filtered_df = site_map_df[mask]
+        print(filtered_df)

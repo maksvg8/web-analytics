@@ -58,6 +58,10 @@ def cost_report():
 
     data_ed, data_em, data_jb = rename_campaign_df(data_ed, data_em, data_jb)
     concatenated_ym_df = concat_ym_campaign_dfs(data_ed, data_em, data_jb)
+    print(concatenated_ym_df.info())
+    print(concatenated_ym_df.head())
+    print(cost_data.info())
+    print(cost_data.head())
     merged_df = merge_ym_capaigne_df_and_costs_data(concatenated_ym_df, cost_data)
 
     # Получение данных бюджета

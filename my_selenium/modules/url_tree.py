@@ -24,12 +24,14 @@ class UrlTree(CustomReport):
     def __init__(
         self, report_name: str = 'test', project_name: str = 'ED', report_type: str = "default"
     ):
-        CustomReport.__init__(self, report_name, project_name, report_type)
+        super().__init__(report_name, project_name, report_type)
         #
         self.at_report_df = pd.DataFrame()
         self.__set_site_url()
         self.at_default_sitemap_df = self.__create_dafault_df()
         self.at_total_rows: int = None
+
+
 
     def __set_site_url(self):
         if self.at_project_name == 'ED':
