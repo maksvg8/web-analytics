@@ -1,5 +1,6 @@
 import pandas as pd
 import datetime
+from custom_reports.modules.class_report import CustomReport
 from yandex_apis.ym_reporting_api.modules import ym_reporting_api as ym
 from custom_reports.modules.banner_reporting import *
 from google_apis.sheets_api.modules.google_sheet_api import *
@@ -38,9 +39,12 @@ def banner_report(project, PLACEMENT_ERROR = 0):
 
 if __name__ == "__main__":
     ed_banner_report = banner_report('ED').astype(str)
-    em_banner_report = banner_report('EM').astype(str)
-    concatenated_banner_report = pd.concat([ed_banner_report, em_banner_report], ignore_index=True)
+    # em_banner_report = banner_report('EM').astype(str)
+    # concatenated_banner_report = pd.concat([ed_banner_report, em_banner_report], ignore_index=True)
+    concatenated_banner_report = ed_banner_report
     concatenated_banner_report = preparation_final_banner_report(concatenated_banner_report)
+
+    transform_date_columns(concatenated_banner_report, 'Дата окончания в отчет', 'Дата окончания размещения')
     
     concatenated_banner_report['Date'] = pd.to_datetime(concatenated_banner_report['Date'])
     today = pd.to_datetime(datetime.date.today())
@@ -49,7 +53,10 @@ if __name__ == "__main__":
     list_of_metrics_2 = ['Уникальные клики', 'Охват']
     concatenated_banner_report[concatenated_banner_report['Date'] <= today] = multiplication_metrics(concatenated_banner_report[concatenated_banner_report['Date'] <= today], list_of_metrics_2, 8.00, 10.00)
     concatenated_banner_report['Date'] = concatenated_banner_report['Date'].astype(str)
-
+    print(concatenated_banner_report)
+    print(concatenated_banner_report.info())
+    test = CustomReport('test', 'ED')
+    test.overwriting_old_csv_report(concatenated_banner_report)
     final_df = concatenated_banner_report.fillna('')
-    del_data = clear_old_gooogle_sheet(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE)
-    set_data = add_df_to_gooogle_sheets(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE, final_df)
+    # del_data = clear_old_gooogle_sheet(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE)
+    # set_data = add_df_to_gooogle_sheets(BANNER_SHEET_ID, BANNER_REPORT_SHEET_RANGE, final_df)

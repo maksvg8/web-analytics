@@ -23,15 +23,29 @@ def extract_banners_parameters(df, re_banner_parameter):
     return df
 
 
-def transform_date_columns(df, column_a, column_b):
-    # Выбираем строки, где столбец A не является пустым
-    mask = df[column_a].notna()
+def transform_date_columns(df: pd.DataFrame, column_a: str, column_b: str) -> pd.DataFrame:
+    # # Проверяем, что переданный оператор сравнения является допустимым
+    # if comparison_operator not in ('>', '<'):
+    #     raise ValueError("Недопустимый оператор сравнения. Используйте '>' или '<'.")
     
+    # Преобразуем типы данных к датам
+    # df[column_a] = pd.to_datetime(df[column_a], format="%d.%m.%Y")
+    # df[column_b] = pd.to_datetime(df[column_b], format="%d.%m.%Y")
+
+    # Создаем маску для выполнения сравнения
+    # if comparison_operator == '>':
+    #     mask = df[column_a].notna() & (df[column_a] > df[column_b])
+    # elif comparison_operator == '<':
+    #     mask = df[column_a].notna() & (df[column_a] < df[column_b])
+    mask = df[column_a].notna()
     # Присваиваем значения из столбца A столбцу B для соответствующих строк
     df.loc[mask, column_b] = df.loc[mask, column_a]
-    
+    print(df[column_a])
+    print(df[column_b])
+    # Возвращаем типы данных к исходным
+    df[[column_a, column_b]] = df[[column_a, column_b]].astype(str)
     return df
-    return
+
 
 
 def transform_banners_sheet(df, project, PLACEMENT_ERROR = 0):
