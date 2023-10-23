@@ -27,10 +27,18 @@ COAST_SHEET_RANGE = "'Для рассчетов'!A1:J"
 REPORT_SHEET_RANGE = "'Сведенный отчет'!A1:Z"
 
 
-PLAN_SHEET_ID = "1_kqqoPJWbOd5hYlYm3cFeB5aKbS4e0SSvukWQGjCaKE"
-PLAN_SHEET_RANGE_AUGUST = "'Для выгрузки Август'!A1:G"
-PLAN_SHEET_RANGE_SEPTEMBER = "'Для выгрузки Сентябрь'!A1:G"
-PLAN_SHEET_RANGE_OCTOBER = "'Для выгрузки Октябрь'!A1:G"
+PLAN_CONFIG = {
+    'PLAN_SHEET_ID' : '1_kqqoPJWbOd5hYlYm3cFeB5aKbS4e0SSvukWQGjCaKE',
+    'PREVIOUS_MONTH' : {'SHEET_RANGE': "'Для выгрузки Август'!A1:G",
+                        'START_DATE' : "2023-08-01",
+                        'END_DATE' : "2023-08-31"},
+    'CURRENT_MONTH' : {'SHEET_RANGE': "'Для выгрузки Сентябрь'!A1:G",
+                        'START_DATE' : "2023-09-01",
+                        'END_DATE' : "2023-09-30"},
+    'NEXT_MONTH' : {'SHEET_RANGE': "'Для выгрузки Октябрь'!A1:G",
+                        'START_DATE' : "2023-10-01",
+                        'END_DATE' : "2023-10-31"},
+}
 
 FACT_SHEET_ID = "19ILZ3UQggDNJveiDoOy9ZRjLU6OM1TFlUiEilHCtbbM"
 

@@ -8,13 +8,8 @@ from credentials import DATA_DIRECTORY
 from config import (
     COAST_SHEET_ID,
     COAST_SHEET_RANGE,
-    PLAN_SHEET_ID,
-    PLAN_SHEET_RANGE_JUNE,
-    PLAN_SHEET_RANGE_JULY,
-    PLAN_SHEET_RANGE_AUGUST,
-    PLAN_SHEET_RANGE_SEPTEMBER,
-    PLAN_SHEET_RANGE_OCTOBER,
     REPORT_SHEET_RANGE,
+    PLAN_CONFIG
 )
 
 
@@ -58,30 +53,26 @@ def cost_report():
 
     data_ed, data_em, data_jb = rename_campaign_df(data_ed, data_em, data_jb)
     concatenated_ym_df = concat_ym_campaign_dfs(data_ed, data_em, data_jb)
-    print(concatenated_ym_df.info())
-    print(concatenated_ym_df.head())
-    print(cost_data.info())
-    print(cost_data.head())
+
     merged_df = merge_ym_capaigne_df_and_costs_data(concatenated_ym_df, cost_data)
 
     # Получение данных бюджета
-    plan_date_august = extract_rows_from_gooogle_sheets(PLAN_SHEET_ID, PLAN_SHEET_RANGE_AUGUST)
-    plan_date_september = extract_rows_from_gooogle_sheets(PLAN_SHEET_ID, PLAN_SHEET_RANGE_SEPTEMBER)
-    plan_date_october = extract_rows_from_gooogle_sheets(PLAN_SHEET_ID, PLAN_SHEET_RANGE_OCTOBER)
+    plan_date_previous = extract_rows_from_gooogle_sheets(PLAN_CONFIG['PLAN_SHEET_ID'], PLAN_CONFIG['PREVIOUS_MONTH']['SHEET_RANGE'])
+    plan_date_current = extract_rows_from_gooogle_sheets(PLAN_CONFIG['PLAN_SHEET_ID'], PLAN_CONFIG['CURRENT_MONTH']['SHEET_RANGE'])
+    plan_date_next = extract_rows_from_gooogle_sheets(PLAN_CONFIG['PLAN_SHEET_ID'], PLAN_CONFIG['NEXT_MONTH']['SHEET_RANGE'])
 
     # Преобразование бюджетов для последующего объединения
-
-    plan_df_august = transform_planned_budget_df(
-        plan_date_august, "2023-08-01", "2023-08-31"
+    plan_df_previous = transform_planned_budget_df(
+        plan_date_previous, PLAN_CONFIG['PREVIOUS_MONTH']['START_DATE'], PLAN_CONFIG['PREVIOUS_MONTH']['END_DATE']
     )
-    plan_df_september = transform_planned_budget_df(
-        plan_date_september, "2023-09-01", "2023-09-30"
+    plan_df_current = transform_planned_budget_df(
+        plan_date_current, PLAN_CONFIG['CURRENT_MONTH']['START_DATE'], PLAN_CONFIG['CURRENT_MONTH']['END_DATE']
     )
-    plan_df_october = transform_planned_budget_df(
-        plan_date_october, "2023-10-01", "2023-10-31"
+    plan_df_next = transform_planned_budget_df(
+        plan_date_next, PLAN_CONFIG['NEXT_MONTH']['START_DATE'], PLAN_CONFIG['NEXT_MONTH']['END_DATE']
     )
     concatenated_plan_df = pd.concat(
-        [plan_df_august, plan_df_september, plan_df_october], ignore_index=True
+        [plan_df_previous, plan_df_current, plan_df_next], ignore_index=True
     )
 
     # Финальное объединение
