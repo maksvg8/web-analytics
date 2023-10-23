@@ -46,8 +46,8 @@ def banner_report(project, PLACEMENT_ERROR = 0):
 
 if __name__ == "__main__":
     ed_banner_report = banner_report('ED').astype(str)
-    # em_banner_report = banner_report('EM').astype(str)
-    # concatenated_banner_report = pd.concat([ed_banner_report, em_banner_report], ignore_index=True)
+    em_banner_report = banner_report('EM').astype(str)
+    concatenated_banner_report = pd.concat([ed_banner_report, em_banner_report], ignore_index=True)
     concatenated_banner_report = ed_banner_report
     concatenated_banner_report = preparation_final_banner_report(concatenated_banner_report)
     
