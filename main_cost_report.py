@@ -65,16 +65,12 @@ def cost_report():
     merged_df = merge_ym_capaigne_df_and_costs_data(concatenated_ym_df, cost_data)
 
     # Получение данных бюджета
-    plan_date_july = extract_rows_from_gooogle_sheets(PLAN_SHEET_ID, PLAN_SHEET_RANGE_JULY)
     plan_date_august = extract_rows_from_gooogle_sheets(PLAN_SHEET_ID, PLAN_SHEET_RANGE_AUGUST)
     plan_date_september = extract_rows_from_gooogle_sheets(PLAN_SHEET_ID, PLAN_SHEET_RANGE_SEPTEMBER)
     plan_date_october = extract_rows_from_gooogle_sheets(PLAN_SHEET_ID, PLAN_SHEET_RANGE_OCTOBER)
 
     # Преобразование бюджетов для последующего объединения
 
-    plan_df_july = transform_planned_budget_df(
-        plan_date_july, "2023-07-01", "2023-07-31"
-    )
     plan_df_august = transform_planned_budget_df(
         plan_date_august, "2023-08-01", "2023-08-31"
     )
@@ -85,7 +81,7 @@ def cost_report():
         plan_date_october, "2023-10-01", "2023-10-31"
     )
     concatenated_plan_df = pd.concat(
-        [plan_df_july, plan_df_august, plan_df_september, plan_df_october], ignore_index=True
+        [plan_df_august, plan_df_september, plan_df_october], ignore_index=True
     )
 
     # Финальное объединение

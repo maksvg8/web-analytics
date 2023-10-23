@@ -118,6 +118,7 @@ def preparation_final_banner_report(banner_report_df):
 
 def multiplication_metrics(df, list_of_metrics, min_multiplier, max_multiplier):
     df[list_of_metrics] = df[list_of_metrics].astype(float)
+    # check random seed
     random_factors = np.random.uniform(min_multiplier, max_multiplier, size=(len(df), len(list_of_metrics)))
     df[list_of_metrics] = (df[list_of_metrics] + 1) * random_factors
     df[list_of_metrics] = df[list_of_metrics].round(0)
