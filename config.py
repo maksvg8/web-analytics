@@ -55,7 +55,24 @@ PAGE_VIEWS_SHEET_ID = "1tz061j_CvCzn3OKtBXN66ZBOGf3B5f4wrqxULq7YGSs"
 PAGE_VIEWS_RANGE = "'ED_EM'!A1:H"
 
 
-# "'Лист26'!A1:J"
+
+# field_name = "eventName"
+# filters_value = "purchase|refund"
+# filters_value = "search|search_complete|search_complete_select|search_select|add_shipping_info|add_payment_info|add_to_cart|begin_checkout|purchase|refund|remove_from_cart|repeat_order|select_item|view_cart|view_item|view_item_list"
+filters_value_funnel = "add_shipping_info|add_payment_info|add_to_cart|begin_checkout|purchase|refund|remove_from_cart|repeat_order|select_item|view_cart|view_item|view_item_list"
+filters_value_transaction = "purchase"
+
+email_field_name = "sessionSourceMedium"
+email_filters_value = "(.*email.*)|(.*viber.*)"
+
+card_field_name = "eventName"
+card_filters_value = "(add_to_cart)|(purchase)"
+
+search_field_name = "eventName"
+search_filters_value = "search.*"
+
+field_name1 = "itemPromotionId"
+filters_value1 = "(.*productsluck.*)|(.*146.*)"
 
 
 # field_name = "eventName"
@@ -77,6 +94,7 @@ filters_value1 = "(.*productsluck.*)|(.*146.*)"
 # filters_value = ".*4952"
 
 # default report parameters
+# default report parameters
 ga4_dim_default = [
     # "eventName",
     "date",
@@ -92,6 +110,7 @@ ga4_dim_default = [
     # "customEvent:session_number_event",
     # "customEvent:client_id_event",
     # "customEvent:user_id_event",
+    "customEvent:client_id_event"
 ]
 
 ga4_metr_default = [
@@ -108,8 +127,9 @@ ga4_metr_default = [
 
 # for sign_up users report
 ga4_dim_ed_sign_up_users = [
-    # "date",
-    # "customEvent:sign_up_date",
+    "date",
+    "customEvent:hit_timestamp",
+    "eventName",
     # "eventName",
     # "browser",
     # "deviceCategory",
@@ -119,7 +139,8 @@ ga4_dim_ed_sign_up_users = [
     "customEvent:user_id_event"
 ]
 
-ga4_metr_ed_sign_up_users = ["eventCount", "totalPurchasers"]
+ga4_metr_ed_sign_up_users = ["eventCount"]
+# , "totalPurchasers"
 
 # for banners report
 ga4_dim_banners = [

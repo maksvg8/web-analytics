@@ -9,6 +9,8 @@ __pycache__/
 # Distribution / packaging
 .Python
 .vscode/
+.ipynb_checkpoints/
+archive/
 build/
 develop-eggs/
 dist/
@@ -34,3 +36,5 @@ google_apis/data/
 credentials.py
 *.xlsx
 *.csv
+*.png
+*.svg
